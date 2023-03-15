@@ -49,7 +49,7 @@ const App = () => {
         <ambientLight intensity={1} />
         {/* <Environment files='/hdr/adamsbridge.hdr' /> */}
 
-        <axesHelper args={[20]} />
+        <axesHelper args={[2]} />
 
         <Suspense fallback={null}>
           <>
