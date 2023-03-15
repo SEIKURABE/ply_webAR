@@ -5,6 +5,8 @@ import { PLYLoader } from "three-stdlib";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls, Points, Preload } from "@react-three/drei";
 
+import { addUrlPrefix } from "../util/addUrlPrefix";
+
 const PointCloud = () => {
   const plyRef: any = useRef(null);
   const plyData = useRef(null);
@@ -13,7 +15,10 @@ const PointCloud = () => {
 
   const loader = new PLYLoader();
 
-  loader.load("/model/demo.ply", (geometry: any) => {
+  console.log("basePath------", addUrlPrefix("/model/demo.ply"));
+  const modelPath = addUrlPrefix("/model/demo.ply");
+
+  loader.load(modelPath, (geometry: any) => {
     const material = new THREE.PointsMaterial({
       size: 0.02,
       vertexColors: true,
