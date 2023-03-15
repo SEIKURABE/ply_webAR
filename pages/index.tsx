@@ -3,34 +3,39 @@ import * as THREE from "three";
 import { PLYLoader } from "three-stdlib";
 
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, Preload } from "@react-three/drei";
+import { Environment, OrbitControls, Points, Preload } from "@react-three/drei";
 
-const PLYModel = () => {
+const PointCloud = () => {
+  const plyRef: any = useRef(null);
+  const plyData = useRef(null);
+
+  const [loaded, setLoaded] = useState(false);
+
   const loader = new PLYLoader();
-  const [ply, setPly] = React.useState(null);
 
-  const material = new THREE.MeshStandardMaterial({
-    color: "#555555",
-    metalness: 0,
-    roughness: 0,
+  loader.load("/model/demo.ply", (geometry: any) => {
+    const material = new THREE.PointsMaterial({
+      size: 0.02,
+      vertexColors: true,
+    });
+
+    const points: any = new THREE.Points(geometry, material);
+    plyData.current = points;
+
+    setLoaded(true);
   });
 
-  React.useEffect(() => {
-    loader.load("/model/demo.ply", (ply: any) => {
-      ply.computeVertexNormals();
-      setPly(ply);
-    });
-  }, []);
+  useEffect(() => {
+    if (plyData.current) {
+      plyRef.current.add(plyData.current);
+    }
+  }, [loaded]);
 
-  return ply ? (
+  return (
     <group dispose={null}>
-      <mesh
-        geometry={ply}
-        material={material}
-        rotation={[-Math.PI / 2, 0, 0]}
-      />
+      <mesh ref={plyRef} rotation={[0, -Math.PI, 0]} />
     </group>
-  ) : null;
+  );
 };
 
 const App = () => {
@@ -39,16 +44,18 @@ const App = () => {
   return (
     <div className='page-index'>
       <Canvas ref={canvasRef} className='canvas'>
-        <OrbitControls autoRotate={false} enableZoom={true} enablePan={false} />
+        <OrbitControls autoRotate={false} enableZoom={true} enablePan={true} />
 
         <ambientLight intensity={1} />
-        <Environment files='/hdr/adamsbridge.hdr' />
+        {/* <Environment files='/hdr/adamsbridge.hdr' /> */}
+
+        <axesHelper args={[20]} />
 
         <Suspense fallback={null}>
           <>
-            <Preload all />
+            {/* <Preload all /> */}
 
-            <PLYModel />
+            <PointCloud />
           </>
         </Suspense>
       </Canvas>
@@ -57,6 +64,7 @@ const App = () => {
         .page-index {
           width: 100%;
           height: 100%;
+          background-color: #555;
           position: absolute;
         }
       `}</style>
