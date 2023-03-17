@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, Suspense } from "react";
 import * as THREE from "three";
-import { PLYLoader } from "three-stdlib";
+import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls, Points, Preload } from "@react-three/drei";
@@ -10,25 +10,32 @@ import { addUrlPrefix } from "../util/addUrlPrefix";
 const PointCloud = () => {
   const plyRef: any = useRef(null);
   const plyData = useRef(null);
-
   const [loaded, setLoaded] = useState(false);
-
   const loader = new PLYLoader();
-
-  console.log("basePath------", addUrlPrefix("/model/demo.ply"));
   const modelPath = addUrlPrefix("/model/demo.ply");
 
-  loader.load(modelPath, (geometry: any) => {
-    const material = new THREE.PointsMaterial({
-      size: 0.02,
-      vertexColors: true,
-    });
+  loader.load(
+    modelPath,
+    (geometry: any) => {
+      geometry.center(); // 中心点を原点に移動
 
-    const points: any = new THREE.Points(geometry, material);
-    plyData.current = points;
+      const material = new THREE.PointsMaterial({
+        size: 0.2,
+        vertexColors: true,
+      });
 
-    setLoaded(true);
-  });
+      const points: any = new THREE.Points(geometry, material);
+      plyData.current = points;
+
+      setLoaded(true);
+    },
+    (xhr) => {
+      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 
   useEffect(() => {
     if (plyData.current) {
@@ -54,7 +61,7 @@ const App = () => {
         <ambientLight intensity={1} />
         {/* <Environment files='/hdr/adamsbridge.hdr' /> */}
 
-        <axesHelper args={[2]} />
+        <axesHelper args={[1]} />
 
         <Suspense fallback={null}>
           <>
