@@ -21,6 +21,7 @@ export function DeviceOrientationControlsStory() {
 
 const WebAR = () => {
   const canvasRef = useRef(null);
+  const [isShowModal, showModal] = useState(true);
 
   const isIos = () => {
     const ua = navigator.userAgent.toLowerCase();
@@ -47,6 +48,51 @@ const WebAR = () => {
       };
       // deviceorientationイベントで既にスマホの傾きが取れているか確認
       window.addEventListener("deviceorientation", deviceOrienEvent, false);
+
+      const alertMessage =
+        "モーションセンサーの使用が拒否されました。\nこのページを楽しむには、デバイスモーションセンサーの使用を許可する必要があります。\nSafariのアプリを再起動して、モーションセンサーの使用（「動作と方向」へのアクセス）を許可をしてください。";
+      const deviceOrienModalButton = document.getElementById(
+        "device-orien-modal-button"
+      );
+
+      deviceOrienModalButton?.addEventListener("click", () => {
+        // ここからスマホの傾きを取得するためのリクエストをする処理
+        if (
+          window.DeviceMotionEvent &&
+          (window.DeviceMotionEvent as any).requestPermission &&
+          typeof (window.DeviceMotionEvent as any).requestPermission ===
+            "function"
+        ) {
+          (window.DeviceMotionEvent as any)
+            .requestPermission()
+            .then((res: any) => {});
+        }
+        if (
+          window.DeviceOrientationEvent &&
+          (window.DeviceOrientationEvent as any).requestPermission &&
+          typeof (DeviceOrientationEvent as any).requestPermission ===
+            "function"
+        ) {
+          (window.DeviceOrientationEvent as any)
+            .requestPermission()
+            .then((res: any) => {
+              console.log(res);
+              if (res === "granted") {
+                // 許可が選択されたらモーダルを非表示にする
+                deviceOrienModalButton.classList.add("is-hidden");
+
+                resolve("resolve");
+              } else {
+                // 拒否されたらアラートを表示
+                alert(alertMessage);
+                reject("resolve");
+              }
+            });
+        } else {
+          alert(alertMessage);
+          reject("resolve");
+        }
+      });
     });
   };
 
@@ -85,7 +131,7 @@ const WebAR = () => {
       <div className='modal'>
         このページでは端末の向きと方向を取得し ます。
         次に表示されるポップアップに従って「許可」を選択してください。
-        <button type='button' className='btn'>
+        <button type='button' id='device-orien-modal-button' className='btn'>
           OK
         </button>
       </div>
@@ -107,6 +153,10 @@ const WebAR = () => {
           left: 50%;
           transform: translate(-50%, -50%);
           color: #000;
+
+          &.is-hidden {
+            display: none;
+          }
 
           .btn {
             width: 100%;
