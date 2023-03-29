@@ -16,7 +16,7 @@ import {
 import { addUrlPrefix } from "../util/addUrlPrefix";
 
 export function DeviceOrientationControlsStory() {
-  const cameraRef = useRef(null);
+  const cameraRef = useRef([]);
   const deviceOrientationRef = useRef(null);
 
   console.log(cameraRef.current);
@@ -27,7 +27,7 @@ export function DeviceOrientationControlsStory() {
 
       <DeviceOrientationControls
         ref={deviceOrientationRef}
-        args={[cameraRef.current]}
+        args={cameraRef.current}
       />
 
       <Box args={[100, 100, 100, 4, 4, 4]}>
