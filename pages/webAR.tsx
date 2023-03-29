@@ -49,7 +49,12 @@ const WebAR = () => {
       };
       // deviceorientationイベントで既にスマホの傾きが取れているか確認
       window.addEventListener("deviceorientation", deviceOrienEvent, false);
+    });
+  };
 
+  const checkModalDeviceOrien = () => {
+    // Promiseで書く
+    return new Promise((resolve, reject) => {
       // ここからスマホの傾きを取得するためのリクエストをする処理
       if (
         window.DeviceMotionEvent &&
@@ -105,10 +110,7 @@ const WebAR = () => {
     "モーションセンサーの使用が拒否されました。\nこのページを楽しむには、デバイスモーションセンサーの使用を許可する必要があります。\nSafariのアプリを再起動して、モーションセンサーの使用（「動作と方向」へのアクセス）を許可をしてください。";
 
   const handleClickModalButton = () => {
-    console.log(
-      "DeviceOrientationControlsRef",
-      DeviceOrientationControlsRef.current
-    );
+    checkModalDeviceOrien();
   };
 
   return (
@@ -129,7 +131,7 @@ const WebAR = () => {
           </>
         </Suspense>
       </Canvas>
-      $
+
       {isShowModal && (
         <div className='modal'>
           このページでは端末の向きと方向を取得し ます。
@@ -143,6 +145,7 @@ const WebAR = () => {
           </button>
         </div>
       )}
+
       <style jsx>{`
         .page-index {
           width: 100%;
