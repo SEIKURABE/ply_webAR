@@ -27,7 +27,7 @@ export function DeviceOrientationControlsStory() {
 
       <DeviceOrientationControls
         ref={deviceOrientationRef}
-        args={cameraRef.current}
+        // args={cameraRef.current}
       />
 
       <Box args={[100, 100, 100, 4, 4, 4]}>
