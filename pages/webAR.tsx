@@ -15,9 +15,7 @@ import {
 
 import { addUrlPrefix } from "../util/addUrlPrefix";
 
-export function DeviceOrientationControlsStory() {
-  return <></>;
-}
+import { WebCamera } from "../components/WebCamera";
 
 const WebAR = () => {
   const canvasRef = useRef(null);
@@ -117,47 +115,73 @@ const WebAR = () => {
     checkModalDeviceOrien();
   };
 
+  const [activeCamera, setActiveCamera] = useState(false);
+  const handleClickActiveCameraButton = () => {
+    setActiveCamera(!activeCamera);
+  };
+
   return (
-    <div className='page-index'>
-      {ready && (
-        <Canvas ref={canvasRef} className='canvas'>
-          <PerspectiveCamera />
-          <DeviceOrientationControls ref={DeviceOrientationControlsRef} />
-          <ambientLight intensity={1} />
+    <div className='page-webar'>
+      <div className='main'>
+        {ready && (
+          <Canvas ref={canvasRef} className='canvas'>
+            <PerspectiveCamera />
+            <DeviceOrientationControls ref={DeviceOrientationControlsRef} />
+            <ambientLight intensity={1} />
 
-          <axesHelper args={[1]} />
+            <axesHelper args={[1]} />
 
-          <Suspense fallback={null}>
-            <>
-              <Box args={[100, 100, 100, 4, 4, 4]}>
-                <meshBasicMaterial wireframe />
-                <axesHelper args={[100]} />
-              </Box>
-            </>
-          </Suspense>
-        </Canvas>
-      )}
+            <Suspense fallback={null}>
+              <>
+                <Box args={[100, 100, 100, 4, 4, 4]}>
+                  <meshBasicMaterial wireframe />
+                  <axesHelper args={[100]} />
+                </Box>
+              </>
+            </Suspense>
+          </Canvas>
+        )}
 
-      {isShowModal && (
-        <div className='modal'>
-          このページでは端末の向きと方向を取得し ます。
-          次に表示されるポップアップに従って「許可」を選択してください。
-          <button
-            type='button'
-            className='btn'
-            onClick={handleClickModalButton}
-          >
-            OK
-          </button>
-        </div>
-      )}
+        {isShowModal && (
+          <div className='modal'>
+            このページでは端末の向きと方向を取得し ます。
+            次に表示されるポップアップに従って「許可」を選択してください。
+            <button
+              type='button'
+              className='btn'
+              onClick={handleClickModalButton}
+            >
+              OK
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className='background-video'>{activeCamera && <WebCamera />}</div>
+
+      <div className='button-container'>
+        <button
+          type='button'
+          className={`active-camera-button ${activeCamera ? "is-active" : ""}`}
+          onClick={handleClickActiveCameraButton}
+        >
+          Active Camera
+        </button>
+      </div>
 
       <style jsx>{`
-        .page-index {
+        .page-webar {
           width: 100%;
           height: 100%;
           background-color: #555;
           position: absolute;
+        }
+
+        .main {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          z-index: 1;
         }
 
         .modal {
@@ -182,6 +206,28 @@ const WebAR = () => {
             @include font-size(16px);
             cursor: pointer;
           }
+        }
+
+        .background-video {
+          width: 100%;
+          height: 100%;
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 0;
+
+          background-color: rgba(red, 0.5);
+        }
+
+        .button-container {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          z-index: 100;
+        }
+
+        .active-camera-button {
+          padding: 8px 16px;
         }
       `}</style>
     </div>
