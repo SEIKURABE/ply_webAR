@@ -23,6 +23,7 @@ const WebAR = () => {
   const canvasRef = useRef(null);
   const DeviceOrientationControlsRef = useRef(null);
   const [isShowModal, showModal] = useState(true);
+  const [ready, setReady] = useState(false);
 
   const isIos = () => {
     const ua = navigator.userAgent.toLowerCase();
@@ -37,7 +38,9 @@ const WebAR = () => {
     // Promiseで書く
     return new Promise((resolve, reject) => {
       // iOS以外（android）の場合には追加処理が必要ないのでresolveを返す
-      if (!isIos()) resolve("resolve");
+      if (!isIos()) {
+        resolve("resolve");
+      }
 
       const deviceOrienEvent = () => {
         window.removeEventListener(
@@ -47,6 +50,7 @@ const WebAR = () => {
         );
         resolve("resolve");
       };
+
       // deviceorientationイベントで既にスマホの傾きが取れているか確認
       window.addEventListener("deviceorientation", deviceOrienEvent, false);
     });
@@ -78,6 +82,7 @@ const WebAR = () => {
             console.log(res);
             if (res === "granted") {
               // 許可が選択されたらモーダルを非表示にする
+              setReady(true);
               showModal(false);
               resolve("resolve");
             } else {
@@ -93,13 +98,12 @@ const WebAR = () => {
     });
   };
 
-  const [ready, setReady] = useState(false);
-
   useEffect(() => {
     checkDeviceOrien()
       .then(() => {
         // checkDeviceOrien関数のPromiseの結果が出てからThreeシーンの生成を行わせる
         setReady(true);
+        showModal(false);
       })
       .catch((error) => {
         console.log(error);
@@ -115,22 +119,24 @@ const WebAR = () => {
 
   return (
     <div className='page-index'>
-      <Canvas ref={canvasRef} className='canvas'>
-        <PerspectiveCamera />
-        <DeviceOrientationControls ref={DeviceOrientationControlsRef} />
-        <ambientLight intensity={1} />
+      {ready && (
+        <Canvas ref={canvasRef} className='canvas'>
+          <PerspectiveCamera />
+          <DeviceOrientationControls ref={DeviceOrientationControlsRef} />
+          <ambientLight intensity={1} />
 
-        <axesHelper args={[1]} />
+          <axesHelper args={[1]} />
 
-        <Suspense fallback={null}>
-          <>
-            <Box args={[100, 100, 100, 4, 4, 4]}>
-              <meshBasicMaterial wireframe />
-              <axesHelper args={[100]} />
-            </Box>
-          </>
-        </Suspense>
-      </Canvas>
+          <Suspense fallback={null}>
+            <>
+              <Box args={[100, 100, 100, 4, 4, 4]}>
+                <meshBasicMaterial wireframe />
+                <axesHelper args={[100]} />
+              </Box>
+            </>
+          </Suspense>
+        </Canvas>
+      )}
 
       {isShowModal && (
         <div className='modal'>
