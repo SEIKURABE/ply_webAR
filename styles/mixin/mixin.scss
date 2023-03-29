@@ -1,0 +1,162 @@
+//**
+//* Common Class（汎用クラス定義／Mixin）
+//*------------------------------------*
+
+@mixin backface-hidden() {
+  backface-visibility: hidden;
+  transform: translate3d(0,0,0);
+  transform-style: preserve-3d;
+}
+
+@mixin overflow-ellipsis() {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin text-align-justify() {
+  text-align: justify;
+  text-justify: inter-ideograph;
+}
+
+@mixin font-smooth() {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+//  text-rendering: optimizeLegibility;
+}
+
+@mixin font-smooth--responsive() {
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: unset;
+    @media only screen and (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+@mixin reset-font-smooth() {
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: unset;
+}
+
+@mixin font-setting($size: 0) {
+  letter-spacing: $size;
+  -webkit-font-feature-settings: 'pkna' 1; // for Android 4.4
+  font-feature-settings: 'pkna' 1;
+  -webkit-text-size-adjust: 100%;//スマホ、タブレットの縦向き・横向きの際に文字間自動調整
+}
+
+@mixin sr-only() {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@mixin clearfix() {
+  &:after {
+    content: ' ';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin inline-grid-row() {
+  font-family: sans-serif;
+  font-size: 0;
+  letter-spacing: 0;
+}
+
+@mixin inline-grid-col($align: top, $size: 14px) {
+  font-size: $size;
+  display: inline-block;
+  vertical-align: $align;
+}
+
+@mixin flex-align($hrAlign: center, $vtAlign: center, $direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $hrAlign;
+  align-items: $vtAlign;
+}
+
+
+//**
+//* Compornents
+//*------------------------------------*
+
+@mixin triangle-down($size: 10px, $color: #fff) {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: $size $size 0 $size;
+  border-color: $color transparent transparent transparent;
+}
+
+@mixin gradientBar() {
+  background-color: $green;
+  background-image: linear-gradient(to right, $green 50%, $blue 100%);
+  background-size: 100% 100%;
+  box-shadow: 0px 1px 18px 0px rgba( lighten($green, 15%), .5);
+  animation: extendBar .5s $ease-in-circ both;
+}
+
+@mixin gradientProgressBar() {
+  background-color: $green;
+  background-image: linear-gradient(to right, $green 50%, $blue 100%);
+  background-size: 100% 100%;
+  box-shadow: 0px 1px 18px 0px rgba( lighten($green, 15%), .5);
+  border-radius: 4px;
+  animation: extendBar 1s $ease-in-out-cubic both;
+}
+
+//**
+//* px vmin 変換
+//* 第一引数で基準となる画面幅のフォントサイズ、第二引数で基準となる画面幅を入力
+//*------------------------------------*
+
+@function get_vw($size, $viewport: 1280) {
+  $rate: 100 / $viewport;
+  @return $rate * $size * 1vmin;
+}
+
+@mixin fontSizeVW($size, $viewport){
+  font-size: $size * 1px;
+  font-size: get_vw($size, $viewport);
+}
+
+
+//**
+//* 文字列置換
+//*------------------------------------*
+
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+
+
+//**
+//* CSS Animation
+//*------------------------------------*
+
+@mixin shadowRipple($color: rgba(#000, .25), $size: 1.5rem) {
+  @keyframes shadowRipple {
+    from {
+      box-shadow: 0 0 0 0 $color;
+    }
+
+    to {
+      box-shadow: 0 0 0 $size transparent;
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "preset-env": {},
+        "styled-jsx": {
+          "plugins": [
+            [
+              "@styled-jsx/plugin-sass",
+              {
+                "sassOptions": {
+                  "includePaths": ["./styles"],
+                  "data": "@import 'util';"
+                }
+              }
+            ],
+            [
+              "styled-jsx-plugin-postcss",
+              {
+                "path": "./postcss.config.js",
+                "compileEnv": "worker"
+              }
+            ]
+          ]
+        }
+      }
+    ]
+  ]
+}
