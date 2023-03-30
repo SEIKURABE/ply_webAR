@@ -1,22 +1,18 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import * as THREE from "three";
-
 import Webcam from "react-webcam";
 
 export const WebCamera = () => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [windowSize, setWindowSize] = useState({
     width: 0,
     height: 0,
   });
 
   useEffect(() => {
-    if (containerRef.current) {
-      setWindowSize({
-        width: containerRef.current.clientWidth,
-        height: containerRef.current.clientHeight,
-      });
-    }
+    setWindowSize({
+      width: Number(containerRef.current?.clientWidth),
+      height: Number(containerRef.current?.clientHeight),
+    });
   }, []);
 
   return (
