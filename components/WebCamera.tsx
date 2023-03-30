@@ -11,44 +11,59 @@ export const WebCamera = () => {
   const [videoConstraints, setVideoConstraints] = useState<any>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const ref = containerRef.current;
-      const w = ref.clientWidth;
-      const h = ref.clientHeight;
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
 
-      setWindowSize({
-        width: Number(w),
-        height: Number(h),
-      });
+        setWindowSize({
+          width: w,
+          height: h,
+        });
 
-      setVideoConstraints({
-        width: Number(w),
-        height: Number(h),
-        facingMode: { exact: "environment" },
-      });
+        setVideoConstraints({
+          width: w,
+          height: h,
+          facingMode: { exact: "environment" },
+          // facingMode: "user",
+        });
+      };
+
+      window.addEventListener("resize", handleResize);
+      handleResize();
+      return () => window.removeEventListener("resize", handleResize);
     }
-  }, [containerRef]);
+  }, []);
 
   return (
     <div ref={containerRef} className='web-camera-container'>
-      <Webcam
-        width={windowSize.width}
-        height={windowSize.height}
-        videoConstraints={videoConstraints}
-      />
+      {videoConstraints && (
+        <Webcam
+          className='video-camera'
+          width={windowSize.width}
+          height={windowSize.height}
+          minScreenshotWidth={windowSize.width}
+          minScreenshotHeight={windowSize.height}
+          videoConstraints={videoConstraints}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            objectFit: "cover",
+            objectPosition: "center",
+          }}
+        />
+      )}
 
       <style jsx>{`
         .web-camera-container {
           width: 100%;
           height: 100%;
           background-color: rgba(blue, 0.5);
-        }
-
-        .video-camera {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          inset: 0 0 0 0;
+          overflow: hidden;
         }
       `}</style>
     </div>

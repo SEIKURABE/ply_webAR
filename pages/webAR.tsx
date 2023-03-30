@@ -227,6 +227,8 @@ const WebAR = () => {
         }
 
         .active-camera-button {
+          background-color: #333;
+          display: block;
           padding: 8px 16px;
         }
       `}</style>
