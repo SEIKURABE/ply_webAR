@@ -8,23 +8,33 @@ export const WebCamera = () => {
     height: 0,
   });
 
+  const [videoConstraints, setVideoConstraints] = useState<any>(null);
+
   useEffect(() => {
-    setWindowSize({
-      width: Number(containerRef.current?.clientWidth),
-      height: Number(containerRef.current?.clientHeight),
-    });
-  }, []);
+    if (containerRef.current) {
+      const ref = containerRef.current;
+      const w = ref.clientWidth;
+      const h = ref.clientHeight;
+
+      setWindowSize({
+        width: Number(w),
+        height: Number(h),
+      });
+
+      setVideoConstraints({
+        width: Number(w),
+        height: Number(h),
+        facingMode: { exact: "environment" },
+      });
+    }
+  }, [containerRef]);
 
   return (
     <div ref={containerRef} className='web-camera-container'>
       <Webcam
         width={windowSize.width}
         height={windowSize.height}
-        videoConstraints={{
-          width: windowSize.width,
-          height: windowSize.height,
-          facingMode: { exact: "environment" },
-        }}
+        videoConstraints={videoConstraints}
       />
 
       <style jsx>{`
