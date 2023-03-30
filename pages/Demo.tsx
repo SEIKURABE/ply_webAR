@@ -12,14 +12,6 @@ const Demo = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (isPageMounted) {
-      modelViewerRef.current?.addEventListener("load", () => {
-        console.log("loaddddd");
-      });
-    }
-  }, [isPageMounted]);
-
   return (
     <>
       <Script
