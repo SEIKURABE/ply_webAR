@@ -4,7 +4,9 @@ import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 
 import { addUrlPrefix } from "../util/addUrlPrefix";
 
-export const Model = ({ rotation }) => {
+export const Model: React.FunctionComponent<{ rotation?: any }> = ({
+  rotation,
+}) => {
   const plyRef: any = useRef(null);
   const plyData = useRef(null);
   const [loaded, setLoaded] = useState(false);
