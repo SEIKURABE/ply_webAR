@@ -15,6 +15,7 @@ import {
 
 import { addUrlPrefix } from "../util/addUrlPrefix";
 
+import { Model } from "../components/Model";
 import { WebCamera } from "../components/WebCamera";
 
 const WebAR = () => {
@@ -125,7 +126,12 @@ const WebAR = () => {
       <div className='main'>
         {ready && (
           <Canvas ref={canvasRef} className='canvas'>
-            <PerspectiveCamera />
+            <OrbitControls
+              autoRotate={false}
+              enableZoom={true}
+              enablePan={true}
+            />
+            {/* <PerspectiveCamera /> */}
             <DeviceOrientationControls ref={DeviceOrientationControlsRef} />
             <ambientLight intensity={1} />
 
@@ -133,10 +139,12 @@ const WebAR = () => {
 
             <Suspense fallback={null}>
               <>
-                <Box args={[100, 100, 100, 4, 4, 4]}>
+                {/* <Box args={[100, 100, 100, 4, 4, 4]}>
                   <meshBasicMaterial wireframe />
                   <axesHelper args={[100]} />
-                </Box>
+                </Box> */}
+
+                <Model rotation={[0, -Math.PI, 0]} />
               </>
             </Suspense>
           </Canvas>
