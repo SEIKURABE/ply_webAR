@@ -4,9 +4,10 @@ import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 
 import { addUrlPrefix } from "../util/addUrlPrefix";
 
-export const Model: React.FunctionComponent<{ rotation?: any }> = ({
-  rotation,
-}) => {
+export const Model: React.FunctionComponent<{
+  rotation?: any;
+  position?: any;
+}> = ({ rotation, position = [0, , 0] }) => {
   const plyRef: any = useRef(null);
   const plyData = useRef(null);
   const [loaded, setLoaded] = useState(false);
@@ -44,7 +45,7 @@ export const Model: React.FunctionComponent<{ rotation?: any }> = ({
 
   return (
     <group dispose={null}>
-      <mesh ref={plyRef} rotation={rotation} />
+      <mesh ref={plyRef} rotation={rotation} position={position} />
     </group>
   );
 };

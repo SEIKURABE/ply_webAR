@@ -131,7 +131,6 @@ const WebAR = () => {
               enableZoom={true}
               enablePan={true}
             />
-            {/* <PerspectiveCamera /> */}
             <DeviceOrientationControls ref={DeviceOrientationControlsRef} />
             <ambientLight intensity={1} />
 
@@ -144,7 +143,7 @@ const WebAR = () => {
                   <axesHelper args={[100]} />
                 </Box> */}
 
-                <Model rotation={[0, -Math.PI, 0]} />
+                <Model rotation={[0, -Math.PI, 0]} position={[0, -1.15, 0]} />
               </>
             </Suspense>
           </Canvas>
