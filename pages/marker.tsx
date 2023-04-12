@@ -23,7 +23,7 @@ const WebAR = () => {
 
   return mounted ? (
     <div className='page-webar'>
-      <Scene arjs='sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
+      <Scene ar>
         <Entity
           camera
           position='0 1.6 0'
@@ -33,39 +33,14 @@ const WebAR = () => {
           look-controls-enabled='false'
         />
 
-        {detectorActivated && (
-          <Entity
-            primitive='a-plane'
-            // 検出された平面のサイズを指定
-            width='100'
-            height='100'
-            // 検出された平面の法線を指定
-            // Plane Detectionでは、法線が検出された平面の垂直方向を示します
-            rotation='-90 0 0'
-            // 平面のマテリアルを指定
-            material={{
-              src: "https://i.imgur.com/mYmmbrp.png",
-              transparent: true,
-            }}
-            // 平面がクリックされたときの処理
-            onClick={() => alert("Clicked on the detected plane")}
-          />
-        )}
-
-        {/* 平面検出を開始するボタン */}
         <Entity
-          primitive='a-box'
-          width='2'
-          height='2'
-          depth='2'
-          position='0 1 -5'
-          onClick={handleDetectorActivate}
-          material={{
-            src: "https://i.imgur.com/qNs4qDY.jpeg",
-            transparent: true,
-          }}
-          text={{ value: "Start Plane Detection" }}
+          geometry={{ primitive: "box" }}
+          material={{ color: "red" }}
+          position={{ x: 0, y: 0, z: -5 }}
         />
+        <Entity particle-system={{ preset: "snow" }} />
+        <Entity light={{ type: "point" }} />
+        <Entity text={{ value: "Hello, WebVR!" }} />
       </Scene>
 
       <style jsx>{`
