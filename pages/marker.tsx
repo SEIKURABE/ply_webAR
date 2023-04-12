@@ -130,7 +130,7 @@ const WebAR = () => {
         <XRButton
           className='fixed-button xr-button'
           mode={"AR"}
-          sessionInit={{ optionalFeatures: "local-floor" }}
+          sessionInit={{ optionalFeatures: ["local-floor"] }}
           enterOnly={false}
           exitOnly={false}
         >
