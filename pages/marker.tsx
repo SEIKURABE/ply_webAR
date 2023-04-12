@@ -14,9 +14,10 @@ const WebAR = () => {
     }
   });
 
-  const [detectorActivated, setDetectorActivated] = React.useState(false);
+  const [detectorActivated, setDetectorActivated] = useState(false);
 
   const handleDetectorActivate = () => {
+    alert("handleDetectorActivate !!!!");
     setDetectorActivated(true);
   };
 
@@ -47,7 +48,7 @@ const WebAR = () => {
               transparent: true,
             }}
             // 平面がクリックされたときの処理
-            onClick={() => console.log("Clicked on the detected plane")}
+            onClick={() => alert("Clicked on the detected plane")}
           />
         )}
 
@@ -60,7 +61,7 @@ const WebAR = () => {
           position='0 1 -5'
           onClick={handleDetectorActivate}
           material={{
-            src: "https://i.imgur.com/mYmmbrp.png",
+            src: "https://i.imgur.com/qNs4qDY.jpeg",
             transparent: true,
           }}
           text={{ value: "Start Plane Detection" }}
