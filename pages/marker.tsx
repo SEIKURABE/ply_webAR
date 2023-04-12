@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState, Suspense } from "react";
+import Script from "next/script";
+
 import * as THREE from "three";
 // import * as AFRAME from "aframe";
 import { Entity, Scene } from "aframe-react";
@@ -23,8 +25,8 @@ const WebAR = () => {
 
   return mounted ? (
     <div className='page-webar'>
-      <Scene embeddedZ arjs>
-        <Entity camera position='0 1.6 0' device-orientation-permission-ui />
+      <Scene embedded arjs vr-mode-ui='enabled: false'>
+        <Entity camera />
         <Entity
           geometry={{ primitive: "box" }}
           material={{ color: "red" }}
