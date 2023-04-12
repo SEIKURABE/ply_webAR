@@ -1,5 +1,29 @@
-import { VRButton, ARButton, XR, Controllers, Hands } from "@react-three/xr";
+import {
+  VRButton,
+  ARButton,
+  XR,
+  Controllers,
+  Hands,
+  useHitTest,
+} from "@react-three/xr";
 import { Canvas } from "@react-three/fiber";
+
+export const Child = () => {
+  useHitTest((hitMatrix: any, hit: any) => {
+    console.log(hitMatrix.decompose());
+  });
+
+  return (
+    <>
+      <Controllers />
+      <Hands />
+      <mesh>
+        <boxGeometry />
+        <meshBasicMaterial color='blue' />
+      </mesh>
+    </>
+  );
+};
 
 function App() {
   return (
@@ -8,12 +32,7 @@ function App() {
 
       <Canvas>
         <XR>
-          <Controllers />
-          <Hands />
-          <mesh>
-            <boxGeometry />
-            <meshBasicMaterial color='blue' />
-          </mesh>
+          <Child />
         </XR>
       </Canvas>
     </>
