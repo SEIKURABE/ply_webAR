@@ -23,7 +23,7 @@ const WebAR = () => {
 
   return mounted ? (
     <div className='page-webar'>
-      <Scene ar>
+      <Scene embedded arjs>
         <Entity
           camera
           position='0 1.6 0'
@@ -32,7 +32,6 @@ const WebAR = () => {
           wasd-controls-enabled='false'
           look-controls-enabled='false'
         />
-
         <Entity
           geometry={{ primitive: "box" }}
           material={{ color: "red" }}
@@ -40,7 +39,7 @@ const WebAR = () => {
         />
         <Entity particle-system={{ preset: "snow" }} />
         <Entity light={{ type: "point" }} />
-        <Entity text={{ value: "Hello, WebVR!" }} />
+        Z <Entity text={{ value: "Hello, WebVR!" }} />
       </Scene>
 
       <style jsx>{`
