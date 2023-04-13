@@ -54,7 +54,7 @@ const Demo = () => {
               "environment-image": "neutral",
               "shadow-intensity": "1",
               id: "model-viewer",
-              src: `test/${model}`,
+              src: `gltf/${model}`,
               autoplay: true,
               style: {
                 height: "100%",
