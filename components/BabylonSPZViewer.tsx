@@ -22,13 +22,25 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
     if (!sceneRef.current) return;
 
     try {
-      const modelContainer = await BABYLON.SceneLoader.LoadAssetContainerAsync(
-        url,
-        "",
-        sceneRef.current
-      );
-      modelContainer.addAllToScene();
-      modelContainerRef.current = modelContainer;
+      const newModelContainer =
+        await BABYLON.SceneLoader.LoadAssetContainerAsync(
+          url,
+          "",
+          sceneRef.current
+        );
+
+      // 既存のモデルを残しながら新しいモデルを追加
+      newModelContainer.addAllToScene();
+
+      // 旧モデルがあれば削除
+      if (modelContainerRef.current) {
+        setTimeout(() => {
+          modelContainerRef.current?.dispose();
+          modelContainerRef.current = newModelContainer;
+        }, 50); // すぐに削除せず少し待つ
+      } else {
+        modelContainerRef.current = newModelContainer;
+      }
     } catch (error) {
       console.error("Error loading SPZ model:", error);
     }
@@ -60,7 +72,6 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
     loadModel(modelUrls[currentIndex]);
 
     const interval = setInterval(() => {
-      modelContainerRef.current?.dispose();
       setCurrentIndex((prevIndex) => (prevIndex + 1) % modelUrls.length);
     }, frameDuration);
 
@@ -74,13 +85,13 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
       clearInterval(interval);
       engine.dispose();
     };
-  }, [modelUrls, currentIndex, frameDuration]);
+  }, [modelUrls, frameDuration]); // currentIndex は依存関係に入れない
 
   useEffect(() => {
     if (sceneRef.current) {
       loadModel(modelUrls[currentIndex]);
     }
-  }, [modelUrls, currentIndex, frameDuration]);
+  }, [currentIndex]); // modelUrls, frameDuration を依存関係から除外
 
   return <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }} />;
 };
