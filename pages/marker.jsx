@@ -30,6 +30,16 @@ const WebAR = () => {
 
   return (
     <>
+      <Script
+        src='https://aframe.io/releases/1.3.0/aframe.min.js'
+        strategy='afterInteractive'
+      />
+
+      <Script
+        src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js'
+        strategy='afterInteractive'
+      />
+
       <div className='page-webar'>
         {ready &&
           React.createElement(

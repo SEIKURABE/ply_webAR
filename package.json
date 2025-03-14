@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@ar-js-org/ar.js": "^3.4.5",
+    "@babylonjs/core": "^7.53.2",
+    "@babylonjs/gui": "^7.53.2",
+    "@babylonjs/loaders": "^7.53.2",
     "@react-three/cannon": "^6.5.2",
     "@react-three/drei": "^9.57.2",
     "@react-three/fiber": "^8.12.0",
@@ -29,11 +32,13 @@
     "react-webcam": "^7.0.1",
     "three": "^0.151.3",
     "three-stdlib": "^2.21.8",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "webxr-polyfill": "^2.0.3"
   },
   "devDependencies": {
     "@styled-jsx/plugin-sass": "^4.0.2",
     "@types/aframe": "^1.2.2",
+    "@types/babylonjs": "^2.4.5",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
     "postcss-color-function": "^4.1.0",

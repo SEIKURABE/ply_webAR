@@ -15,7 +15,7 @@ import {
 
 import { addUrlPrefix } from "../util/addUrlPrefix";
 
-import { Model } from "../components/Model";
+import { Model } from "../components/PLYViewer";
 import { WebCamera } from "../components/WebCamera";
 
 const WebAR = () => {
