@@ -7,7 +7,7 @@ import PLYViewer from "../components/PLYAnimationViewer";
 
 const App = () => {
   const plyUrls = Array.from(
-    { length: 100 },
+    { length: 50 },
     (_, i) => `/model/demo/frames/frame${i}.ply`
   );
 
@@ -41,7 +41,7 @@ const App = () => {
           list-style: none;
           padding: 16px;
           position: fixed;
-          top: 0;
+          bottom: 0;
           left: 0;
           z-index: 100;
         }
