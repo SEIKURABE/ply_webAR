@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls, Points, Preload } from "@react-three/drei";
 
 import PLYViewer from "../components/PLYAnimationViewer";
+import BabylonSPZViewer from "../components/BabylonSPZViewer";
 
 const App = () => {
   const plyUrls = Array.from(
@@ -11,11 +12,14 @@ const App = () => {
     (_, i) => `/model/demo/frames/frame${i}.ply`
   );
 
+  const spzUrls = Array.from({ length: 3 }, (_, i) => `/spz/spz${i + 1}.spz`);
+
   const plyUrl = ["/model/demo/frames/frame17.ply"];
 
   return (
     <div className='page-index'>
-      <PLYViewer modelUrls={plyUrls} />
+      <BabylonSPZViewer modelUrls={spzUrls} />
+      {/* <PLYViewer modelUrls={plyUrls} /> */}
       {/* <PLYViewer modelUrl={plyUrl} /> */}
 
       <div className='menu'>
@@ -32,7 +36,7 @@ const App = () => {
         .page-index {
           width: 100%;
           height: 100%;
-          background-color: #000;
+          background-color: #fff;
           position: absolute;
         }
 
