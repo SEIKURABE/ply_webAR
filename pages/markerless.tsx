@@ -15,7 +15,7 @@ import {
 
 import { addUrlPrefix } from "../util/addUrlPrefix";
 
-import { Model } from "../components/PLYViewer";
+// import { Model } from "../components/PLYViewer";
 import { WebCamera } from "../components/WebCamera";
 
 const WebAR = () => {
@@ -143,7 +143,7 @@ const WebAR = () => {
                   <axesHelper args={[100]} />
                 </Box> */}
 
-                <Model rotation={[0, -Math.PI, 0]} position={[0, -1.15, 0]} />
+                {/* <Model rotation={[0, -Math.PI, 0]} position={[0, -1.15, 0]} /> */}
               </>
             </Suspense>
           </Canvas>

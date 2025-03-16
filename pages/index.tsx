@@ -23,12 +23,6 @@ const App = () => {
         <Link className='alink' href='SpzAnimation'>
           SpzAnimation
         </Link>
-        {/* <a href='MV'>MV</a> */}
-        {/* <a href='MV_Other'>MV_Other</a> */}
-        {/* <a href='MV_WebXR'>MV_WebXR</a> */}
-        {/* <a href='aframe'>aframe</a> */}
-        {/* <a href='marker'>marker</a> */}
-        {/* <a href='markerless'>markerless</a> */}
       </div>
 
       <style jsx global>{`
