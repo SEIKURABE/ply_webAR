@@ -1,38 +1,37 @@
 import React, { useEffect, useRef, useState, Suspense } from "react";
+import Link from "next/link";
 
-import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls, Points, Preload } from "@react-three/drei";
-
-import PLYViewer from "../components/PLYAnimationViewer";
-import BabylonSPZViewer from "../components/BabylonSPZViewer";
+import PLYViewer from "../components/PLYViewer";
 
 const App = () => {
-  const plyUrls = Array.from(
-    { length: 50 },
-    (_, i) => `/model/demo/frames/frame${i}.ply`
-  );
-
-  const spzUrls = Array.from({ length: 3 }, (_, i) => `/spz/spz${i + 1}.spz`);
-
-  const plyUrl = ["/model/demo/frames/frame17.ply"];
+  const plyUrl = "/model/demo/frames/frame17.ply";
 
   return (
     <div className='page-index'>
-      <BabylonSPZViewer modelUrls={spzUrls} />
-      {/* <PLYViewer modelUrls={plyUrls} /> */}
-      {/* <PLYViewer modelUrl={plyUrl} /> */}
+      <PLYViewer modelUrl={plyUrl} />
 
       <div className='menu'>
-        <a href='BabylonSpz'>BabylonSpz</a>
+        <Link className='alink' href='/'>
+          Ply
+        </Link>
+        <Link className='alink' href='PlyAnimation'>
+          PlyAnimation
+        </Link>
+        <Link className='alink' href='Spz'>
+          Spz
+        </Link>
+        <Link className='alink' href='SpzAnimation'>
+          SpzAnimation
+        </Link>
         {/* <a href='MV'>MV</a> */}
         {/* <a href='MV_Other'>MV_Other</a> */}
         {/* <a href='MV_WebXR'>MV_WebXR</a> */}
-        <a href='aframe'>aframe</a>
-        <a href='marker'>marker</a>
-        <a href='markerless'>markerless</a>
+        {/* <a href='aframe'>aframe</a> */}
+        {/* <a href='marker'>marker</a> */}
+        {/* <a href='markerless'>markerless</a> */}
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         .page-index {
           width: 100%;
           height: 100%;
@@ -50,11 +49,11 @@ const App = () => {
           z-index: 100;
         }
 
-        .menu a {
+        .alink {
           color: #fff;
         }
 
-        .menu a + a {
+        .alink + .alink {
           margin-left: 16px;
         }
       `}</style>

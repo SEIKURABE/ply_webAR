@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
-const BabylonViewer = dynamic(() => import("../components/BabylonViewer"), {
+const BabylonViewer = dynamic(() => import("../components/BabylonSPZViewer"), {
   ssr: false,
 });
 
