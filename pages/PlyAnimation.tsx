@@ -6,7 +6,7 @@ import PLYViewer from "../components/PLYAnimationViewer";
 export default function Home() {
   const plyUrls = Array.from(
     { length: 50 },
-    (_, i) => `/model/demo/frames/frame${i}.ply`
+    (_, i) => `model/demo/frames/frame${i}.ply`
   );
 
   return (

@@ -11,7 +11,7 @@ interface SPZViewerProps {
 
 const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
   modelUrls,
-  frameDuration = 1000,
+  frameDuration = 100,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
