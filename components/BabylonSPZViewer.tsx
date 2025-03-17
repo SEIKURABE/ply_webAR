@@ -48,7 +48,7 @@ const BabylonViewer: React.FC = () => {
       try {
         // **SPZモデルのロード**
         const container = await BABYLON.SceneLoader.LoadAssetContainerAsync(
-          "/spz/spz1.spz",
+          "spz/spz1.spz",
           ""
         );
         container.addAllToScene();

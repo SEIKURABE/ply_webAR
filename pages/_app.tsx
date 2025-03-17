@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
       <div className='menu'>
         <Link className='alink' href='/'>
           Ply
