@@ -10,7 +10,7 @@ interface PLYViewerProps {
   frameDuration?: number;
 }
 
-const PLYViewer: React.FC<PLYViewerProps> = ({
+const PLYAnimationViewer: React.FC<PLYViewerProps> = ({
   modelUrls,
   pointSize = 0.01,
   frameDuration = 50,
@@ -24,14 +24,18 @@ const PLYViewer: React.FC<PLYViewerProps> = ({
       vertexColors: true,
     })
   );
+  const isMounted = useRef(true);
 
   useEffect(() => {
+    isMounted.current = true;
     const loader = new PLYLoader();
     const loadedGeometries: THREE.BufferGeometry[] = [];
     let loadedCount = 0;
 
     modelUrls.forEach((url, index) => {
       loader.load(url, (geometry) => {
+        if (!isMounted.current) return;
+
         if (!geometry.attributes.normal) {
           geometry.computeVertexNormals();
         }
@@ -53,7 +57,9 @@ const PLYViewer: React.FC<PLYViewerProps> = ({
     });
 
     return () => {
+      isMounted.current = false;
       loadedGeometries.forEach((geo) => geo.dispose());
+      materialRef.current.dispose();
     };
   }, [modelUrls]);
 
@@ -95,8 +101,17 @@ const AnimatingPoints: React.FC<{
 }> = ({ geometries, material, frameDuration }) => {
   const [frameIndex, setFrameIndex] = useState(0);
   const lastFrameTime = useRef(performance.now());
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   useFrame(() => {
+    if (!isMounted.current) return;
     const now = performance.now();
     if (now - lastFrameTime.current > frameDuration) {
       setFrameIndex((prevIndex) => (prevIndex + 1) % geometries.length);
@@ -113,4 +128,4 @@ const AnimatingPoints: React.FC<{
   );
 };
 
-export default PLYViewer;
+export default PLYAnimationViewer;
