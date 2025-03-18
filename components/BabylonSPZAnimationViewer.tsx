@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders";
 
@@ -14,6 +14,7 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
+  const engineRef = useRef<BABYLON.Engine | null>(null);
   const modelContainersRef = useRef<BABYLON.AssetContainer[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -22,7 +23,21 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
   const lastSwitchTime = useRef(performance.now());
   let animationFrameId = useRef<number | null>(null);
 
-  const loadModels = async () => {
+  const startAnimationLoop = useCallback(() => {
+    const animate = () => {
+      const now = performance.now();
+      if (now - lastSwitchTime.current > frameDuration) {
+        lastSwitchTime.current = now;
+        setCurrentIndex(
+          (prevIndex) => (prevIndex + 1) % modelContainersRef.current.length
+        );
+      }
+      animationFrameId.current = requestAnimationFrame(animate);
+    };
+    animationFrameId.current = requestAnimationFrame(animate);
+  }, [frameDuration]);
+
+  const loadModels = useCallback(async () => {
     if (!sceneRef.current) return;
     setIsLoading(true);
     setLoadedFiles(0);
@@ -38,11 +53,11 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
             (event) => {
               if (event.lengthComputable) {
                 const progress = (event.loaded / event.total) * 100;
+
                 setLoadingProgress(Math.round(progress));
               }
             }
           );
-          setLoadedFiles((prev) => prev + 1);
           return model;
         } catch (error) {
           console.error("Error loading SPZ model:", error);
@@ -54,32 +69,24 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
     modelContainersRef.current = loadedModels.filter(
       Boolean
     ) as BABYLON.AssetContainer[];
-    setIsLoading(false);
 
-    // 最初のモデルを追加
     if (modelContainersRef.current.length > 0) {
-      modelContainersRef.current[0].addAllToScene();
+      modelContainersRef.current.forEach((model) => {
+        model.addAllToScene();
+        setLoadedFiles((prev) => prev + 1);
+      });
     }
-    startAnimationLoop();
-  };
 
-  const startAnimationLoop = () => {
-    const animate = () => {
-      const now = performance.now();
-      if (now - lastSwitchTime.current > frameDuration) {
-        lastSwitchTime.current = now;
-        setCurrentIndex(
-          (prevIndex) => (prevIndex + 1) % modelContainersRef.current.length
-        );
-      }
-      animationFrameId.current = requestAnimationFrame(animate);
-    };
-    animationFrameId.current = requestAnimationFrame(animate);
-  };
+    scene.executeWhenReady(() => {
+      requestAnimationFrame(() => setIsLoading(false));
+      startAnimationLoop();
+    });
+  }, [modelUrls, startAnimationLoop]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
     const engine = new BABYLON.Engine(canvasRef.current, true);
+    engineRef.current = engine;
     const scene = new BABYLON.Scene(engine);
     sceneRef.current = scene;
 
@@ -109,27 +116,35 @@ const BabylonSPZViewer: React.FC<SPZViewerProps> = ({
     window.addEventListener("resize", () => engine.resize());
 
     return () => {
-      engine.dispose();
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
+      if (engineRef.current) {
+        engineRef.current.stopRenderLoop();
+        engineRef.current.dispose();
+      }
+      if (sceneRef.current) {
+        sceneRef.current.meshes.forEach((mesh) => mesh.dispose());
+        sceneRef.current.dispose();
+      }
+      modelContainersRef.current = [];
+      sceneRef.current = null;
+      engineRef.current = null;
     };
-  }, [modelUrls]);
+  }, [modelUrls, loadModels]);
 
   useEffect(() => {
     if (sceneRef.current && modelContainersRef.current.length > 0) {
       const currentModel = modelContainersRef.current[currentIndex];
       if (!currentModel) return;
 
-      // 前のモデルをシーンから削除
       modelContainersRef.current.forEach((container, index) => {
-        if (index !== currentIndex) {
+        if (index === currentIndex) {
+          container.addAllToScene();
+        } else {
           container.removeAllFromScene();
         }
       });
-
-      // 新しいモデルをシーンに追加
-      currentModel.addAllToScene();
     }
   }, [currentIndex]);
 
