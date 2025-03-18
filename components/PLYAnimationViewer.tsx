@@ -10,7 +10,7 @@ interface PLYViewerProps {
   frameDuration?: number;
 }
 
-const PLYAnimationViewer: React.FC<PLYViewerProps> = ({
+const PLYViewer: React.FC<PLYViewerProps> = ({
   modelUrls,
   pointSize = 0.01,
   frameDuration = 50,
@@ -31,35 +31,53 @@ const PLYAnimationViewer: React.FC<PLYViewerProps> = ({
     const loader = new PLYLoader();
     const loadedGeometries: THREE.BufferGeometry[] = [];
     let loadedCount = 0;
+    const abortControllers: AbortController[] = [];
 
     modelUrls.forEach((url, index) => {
-      loader.load(url, (geometry) => {
-        if (!isMounted.current) return;
+      const controller = new AbortController();
+      abortControllers.push(controller);
 
-        if (!geometry.attributes.normal) {
-          geometry.computeVertexNormals();
-        }
-        geometry.computeBoundingBox();
-        const box = geometry.boundingBox;
-        if (box) {
-          const center = new THREE.Vector3();
-          box.getCenter(center);
-          geometry.translate(-center.x, -center.y, -center.z);
-        }
-        loadedGeometries[index] = geometry;
-        loadedCount++;
-        setProgress(loadedCount);
-        if (loadedCount === modelUrls.length) {
-          setGeometries(loadedGeometries);
-          setLoading(false);
-        }
-      });
+      fetch(url, { signal: controller.signal })
+        .then((response) => response.blob())
+        .then((blob) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (!isMounted.current) return;
+            const arrayBuffer = reader.result as ArrayBuffer;
+            const geometry = loader.parse(arrayBuffer);
+
+            if (!geometry.attributes.normal) {
+              geometry.computeVertexNormals();
+            }
+            geometry.computeBoundingBox();
+            const box = geometry.boundingBox;
+            if (box) {
+              const center = new THREE.Vector3();
+              box.getCenter(center);
+              geometry.translate(-center.x, -center.y, -center.z);
+            }
+            loadedGeometries[index] = geometry;
+            loadedCount++;
+            setProgress(loadedCount);
+            if (loadedCount === modelUrls.length) {
+              setGeometries(loadedGeometries);
+              setLoading(false);
+            }
+          };
+          reader.readAsArrayBuffer(blob);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Failed to load PLY file:", error);
+          }
+        });
     });
 
     return () => {
       isMounted.current = false;
       loadedGeometries.forEach((geo) => geo.dispose());
       materialRef.current.dispose();
+      abortControllers.forEach((controller) => controller.abort());
     };
   }, [modelUrls]);
 
@@ -128,4 +146,4 @@ const AnimatingPoints: React.FC<{
   );
 };
 
-export default PLYAnimationViewer;
+export default PLYViewer;
