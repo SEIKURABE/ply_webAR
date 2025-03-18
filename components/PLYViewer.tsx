@@ -20,38 +20,44 @@ const Loader: React.FC = () => {
 const PLYModel: React.FC<PLYModelProps> = ({ url }) => {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
   const materialRef = useRef<THREE.PointsMaterial | null>(null);
 
   useEffect(() => {
     if (!url) {
-      setError(new Error("モデルのURLが無効です"));
       setLoading(false);
       return;
     }
-    console.log("Loading PLY file from:", url);
 
     const loader = new PLYLoader();
     const controller = new AbortController();
     let isMounted = true;
 
-    loader.load(
-      url,
-      (loadedGeometry) => {
-        if (!isMounted) return;
-        loadedGeometry.computeVertexNormals();
-        loadedGeometry.computeBoundingBox();
-        setGeometry(loadedGeometry);
-        setLoading(false);
-      },
-      undefined,
-      (err) => {
-        if (!isMounted) return;
-        console.log(err.message || "PLYファイルの読み込みに失敗しました");
+    fetch(url, { method: "HEAD", cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`モデルが見つかりません (404): ${url}`);
+        }
+        loader.load(
+          url,
+          (loadedGeometry) => {
+            if (!isMounted) return;
+            loadedGeometry.computeVertexNormals();
+            loadedGeometry.computeBoundingBox();
+            setGeometry(loadedGeometry);
+            setLoading(false);
+          },
+          undefined,
+          (err) => {
+            if (!isMounted) return;
+            console.log(err.message || "PLYファイルの読み込みに失敗しました");
 
+            setLoading(false);
+          }
+        );
+      })
+      .catch((err) => {
         setLoading(false);
-      }
-    );
+      });
 
     return () => {
       isMounted = false;
@@ -93,7 +99,10 @@ interface PLYViewerProps {
   pointSize?: number;
 }
 
-const PLYViewer: React.FC<PLYViewerProps> = ({ modelUrl }) => {
+const PLYViewer: React.FC<PLYViewerProps> = ({
+  modelUrl,
+  pointSize = 0.01,
+}) => {
   useEffect(() => {
     console.log("PLYViewer received modelUrl:", modelUrl);
   }, [modelUrl]);
