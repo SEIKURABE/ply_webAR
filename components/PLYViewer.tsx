@@ -6,6 +6,7 @@ import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 
 interface PLYModelProps {
   url: string;
+  pointSize?: number;
 }
 
 const Loader: React.FC = () => {
@@ -17,10 +18,15 @@ const Loader: React.FC = () => {
   );
 };
 
-const PLYModel: React.FC<PLYModelProps> = ({ url }) => {
+const PLYModel: React.FC<PLYModelProps> = ({ url, pointSize = 0.01 }) => {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const materialRef = useRef<THREE.PointsMaterial | null>(null);
+  const materialRef = useRef<THREE.PointsMaterial>(
+    new THREE.PointsMaterial({
+      size: pointSize,
+      vertexColors: true,
+    })
+  );
 
   useEffect(() => {
     if (!url) {
@@ -37,6 +43,7 @@ const PLYModel: React.FC<PLYModelProps> = ({ url }) => {
         if (!response.ok) {
           throw new Error(`モデルが見つかりません (404): ${url}`);
         }
+
         loader.load(
           url,
           (loadedGeometry) => {
@@ -59,24 +66,27 @@ const PLYModel: React.FC<PLYModelProps> = ({ url }) => {
             setGeometry(loadedGeometry);
             setLoading(false);
           },
-          undefined,
+          // プログレスコールバック
+          (xhr) => {
+            console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+          },
           (err) => {
             if (!isMounted) return;
-            console.log(err.message || "PLYファイルの読み込みに失敗しました");
-
+            console.error(err.message || "PLYファイルの読み込みに失敗しました");
             setLoading(false);
           }
         );
       })
       .catch((err) => {
+        console.error("Fetch error:", err);
         setLoading(false);
       });
 
     return () => {
       isMounted = false;
       controller.abort();
-      geometry?.dispose();
-      materialRef.current?.dispose();
+      if (geometry) geometry.dispose();
+      if (materialRef.current) materialRef.current.dispose();
     };
   }, [url]);
 
@@ -87,7 +97,7 @@ const PLYModel: React.FC<PLYModelProps> = ({ url }) => {
   return (
     <points
       geometry={geometry}
-      material={new THREE.PointsMaterial({ size: 0.01, vertexColors: true })}
+      material={materialRef.current}
       rotation={[0, Math.PI, 0]}
     />
   );
@@ -104,19 +114,12 @@ const SceneSetup: React.FC = () => {
   return null;
 };
 
-const CameraControls: React.FC = () => {
-  return <OrbitControls enablePan enableZoom enableRotate />;
-};
-
 interface PLYViewerProps {
   modelUrl: string;
   pointSize?: number;
 }
 
-const PLYViewer: React.FC<PLYViewerProps> = ({
-  modelUrl,
-  pointSize = 0.01,
-}) => {
+const PLYViewer: React.FC<PLYViewerProps> = ({ modelUrl }) => {
   useEffect(() => {
     console.log("PLYViewer received modelUrl:", modelUrl);
   }, [modelUrl]);
@@ -130,7 +133,7 @@ const PLYViewer: React.FC<PLYViewerProps> = ({
         {modelUrl ? <PLYModel url={modelUrl} /> : <Loader />}
 
         <axesHelper args={[1]} />
-        <CameraControls />
+        <OrbitControls enablePan enableZoom enableRotate />
       </Canvas>
     </div>
   );
