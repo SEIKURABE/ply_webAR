@@ -8,16 +8,12 @@ const BabylonSPZViewer: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<BABYLON.Engine | null>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
-  const [xrHelper, setXRHelper] =
-    useState<BABYLON.WebXRDefaultExperience | null>(null);
   const [isXRSupported, setIsXRSupported] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
     new WebXRPolyfill();
-    setIsIOS(/iPhone|iPad|iPod/i.test(navigator.userAgent));
 
     const engine = new BABYLON.Engine(canvasRef.current, true, {
       preserveDrawingBuffer: true,
@@ -32,6 +28,17 @@ const BabylonSPZViewer: React.FC = () => {
     scene.blockMaterialDirtyMechanism = true;
     scene.useConstantAnimationDeltaTime = true;
     sceneRef.current = scene;
+
+    // XRサポートの確認を追加
+    BABYLON.WebXRSessionManager.IsSessionSupportedAsync("immersive-vr")
+      .then((supported) => {
+        console.log("xr supported----", supported);
+
+        setIsXRSupported(supported);
+      })
+      .catch(() => {
+        setIsXRSupported(false);
+      });
 
     const camera = new BABYLON.ArcRotateCamera(
       "camera",
@@ -82,27 +89,34 @@ const BabylonSPZViewer: React.FC = () => {
   }, []);
 
   const startAR = async () => {
-    if (!xrHelper || !xrHelper.baseExperience) {
-      alert("AR is not supported on this device.");
-      return;
-    }
+    if (!sceneRef.current) return;
+
     try {
-      await xrHelper.baseExperience.enterXRAsync("immersive-ar", "local-floor");
-      console.log("AR mode started!");
+      const xr = await sceneRef.current.createDefaultXRExperienceAsync({
+        uiOptions: {
+          sessionMode: "immersive-ar",
+        },
+      });
+
+      // AR session開始時の処理
+      xr.baseExperience.onStateChangedObservable.add((state) => {
+        if (state === BABYLON.WebXRState.IN_XR) {
+          // ARセッション開始時の処理
+          console.log("AR session started");
+        }
+      });
+
+      await xr.baseExperience.enterXRAsync("immersive-ar", "local-floor");
     } catch (error) {
-      console.error("Failed to enter AR mode:", error);
-      alert("WebXR AR is not supported on this device.");
+      console.error("AR start failed:", error);
     }
   };
 
   return (
-    <div className='relative w-full h-full flex justify-center items-center'>
+    <>
       <canvas ref={canvasRef} className='w-full h-full'></canvas>
       {isXRSupported && (
-        <button
-          onClick={startAR}
-          className='absolute bottom-4 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition'
-        >
+        <button onClick={startAR} className='ar-button'>
           Start AR Mode
         </button>
       )}
@@ -114,8 +128,15 @@ const BabylonSPZViewer: React.FC = () => {
           position: absolute;
           z-index: -1;
         }
+
+        .ar-buttton {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 2;
+        }
       `}</style>
-    </div>
+    </>
   );
 };
 

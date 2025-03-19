@@ -4,11 +4,7 @@ import Link from "next/link";
 import PLYViewer from "../components/PLYViewer";
 
 const App = () => {
-  const [plyUrl, setPlyUrl] = useState("");
-
-  useEffect(() => {
-    setPlyUrl("model/demo/frames/frame17.ply");
-  }, []);
+  const plyUrl = "model/demo/frames/frame17.ply";
 
   return (
     <div className='page-index'>

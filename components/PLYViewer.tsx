@@ -43,6 +43,19 @@ const PLYModel: React.FC<PLYModelProps> = ({ url }) => {
             if (!isMounted) return;
             loadedGeometry.computeVertexNormals();
             loadedGeometry.computeBoundingBox();
+
+            // 中心を計算して設定
+            const boundingBox = loadedGeometry.boundingBox;
+            if (boundingBox) {
+              const centerPoint = new THREE.Vector3();
+              boundingBox.getCenter(centerPoint);
+              loadedGeometry.translate(
+                -centerPoint.x,
+                -centerPoint.y,
+                -centerPoint.z
+              );
+            }
+
             setGeometry(loadedGeometry);
             setLoading(false);
           },
@@ -75,6 +88,7 @@ const PLYModel: React.FC<PLYModelProps> = ({ url }) => {
     <points
       geometry={geometry}
       material={new THREE.PointsMaterial({ size: 0.01, vertexColors: true })}
+      rotation={[0, Math.PI, 0]}
     />
   );
 };
@@ -114,6 +128,8 @@ const PLYViewer: React.FC<PLYViewerProps> = ({
         <ambientLight intensity={0.8} />
         <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
         {modelUrl ? <PLYModel url={modelUrl} /> : <Loader />}
+
+        <axesHelper args={[1]} />
         <CameraControls />
       </Canvas>
     </div>
