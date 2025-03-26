@@ -18,6 +18,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <Link className='alink' href='SpzAnimation'>
           SpzAnimation
         </Link>
+        <Link className='alink' href='WebXR'>
+          WebXR
+        </Link>
       </div>
     </>
   );
