@@ -3,10 +3,15 @@ import dynamic from "next/dynamic";
 
 import PLYAnimationViewer from "../components/PLYAnimationViewer";
 
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
+const basePath = publicRuntimeConfig.basePath || "";
+
 export default function Home() {
   const plyUrls = Array.from(
     { length: 50 },
-    (_, i) => `model/demo/frames/frame${i}.ply`
+    (_, i) => `${basePath}/model/demo/frames/frame${i}.ply`
   );
 
   return (

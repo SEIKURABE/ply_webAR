@@ -3,8 +3,13 @@ import Link from "next/link";
 
 import PLYViewer from "../components/PLYViewer";
 
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
+const basePath = publicRuntimeConfig.basePath || "";
+
 const App = () => {
-  const plyUrl = "model/demo/frames/frame17.ply";
+  const plyUrl = `${basePath}/model/demo/frames/frame17.ply`;
 
   return (
     <div className='page-index'>
