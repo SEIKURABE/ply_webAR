@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState, Suspense } from "react";
-import Link from "next/link";
 
 import PLYViewer from "../components/PLYViewer";
 

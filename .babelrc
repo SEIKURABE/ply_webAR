@@ -11,7 +11,7 @@
               {
                 "sassOptions": {
                   "includePaths": ["./styles"],
-                  "data": "@import 'util';"
+                  "data": "@use 'util' as *;"
                 }
               }
             ],

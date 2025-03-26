@@ -210,7 +210,6 @@ const WebAR = () => {
             margin: 24px auto 0;
             text-align: center;
             color: #fff;
-            @include font-size(16px);
             cursor: pointer;
           }
         }
