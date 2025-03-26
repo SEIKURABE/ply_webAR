@@ -18,6 +18,7 @@
     "@react-three/drei": "^9.57.2",
     "@react-three/fiber": "^8.12.0",
     "@react-three/xr": "^5.4.0",
+    "@types/babylonjs": "^2.4.5",
     "@types/node": "18.15.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -38,7 +39,6 @@
   "devDependencies": {
     "@styled-jsx/plugin-sass": "^4.0.2",
     "@types/aframe": "^1.2.2",
-    "@types/babylonjs": "^2.4.5",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
     "postcss-color-function": "^4.1.0",
