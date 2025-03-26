@@ -7,11 +7,13 @@ import "@babylonjs/core/XR/motionController";
 interface SPZARViewerProps {
   modelUrls: string[];
   frameDuration?: number;
+  modelScale?: number;
 }
 
 const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
   modelUrls,
-  frameDuration = 100,
+  frameDuration = 100, // モデル切り替え間隔（ミリ秒）
+  modelScale = 0.5, // ARでのモデルサイズ
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
@@ -27,6 +29,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
   const animationFrameId = useRef<number | null>(null);
   const xrHelperRef = useRef<BABYLON.WebXRDefaultExperience | null>(null);
 
+  // モデル自動切り替えアニメーションループ
   const startAnimationLoop = useCallback(() => {
     const animate = () => {
       const now = performance.now();
@@ -41,6 +44,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
     animationFrameId.current = requestAnimationFrame(animate);
   }, [frameDuration]);
 
+  // モデル読み込み
   const loadModels = useCallback(async () => {
     if (!sceneRef.current) return;
     setIsLoading(true);
@@ -63,7 +67,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
           );
           return model;
         } catch (error) {
-          console.error("Error loading SPZ model:", error);
+          console.error("SPZモデル読み込みエラー:", error);
           return null;
         }
       })
@@ -86,6 +90,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
     });
   }, [modelUrls, startAnimationLoop]);
 
+  // AR初期化
   const initializeAR = useCallback(async () => {
     if (!sceneRef.current) return;
 
@@ -108,14 +113,38 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
         setIsARActive(state === BABYLON.WebXRState.IN_XR);
       });
 
-      // Ensure models are positioned on the floor
+      // 床へのテレポート設定
       xrHelper.teleportation.attach();
     } catch (error) {
-      console.error("AR initialization error:", error);
+      console.error("AR初期化エラー:", error);
       setIsARSupported(false);
     }
   }, []);
 
+  // モデル配置と切り替え
+  useEffect(() => {
+    if (sceneRef.current && modelContainersRef.current.length > 0) {
+      const currentModel = modelContainersRef.current[currentIndex];
+      if (!currentModel) return;
+
+      modelContainersRef.current.forEach((container, index) => {
+        if (index === currentIndex) {
+          container.addAllToScene();
+          // AR用のモデル配置調整
+          container.rootNodes.forEach((node) => {
+            if (node instanceof BABYLON.TransformNode) {
+              node.position.y = 0; // 床に配置
+              node.scaling.setAll(modelScale); // スケール調整
+            }
+          });
+        } else {
+          container.removeAllFromScene();
+        }
+      });
+    }
+  }, [currentIndex, modelScale]);
+
+  // シーン初期化
   useEffect(() => {
     if (!canvasRef.current) return;
     const engine = new BABYLON.Engine(canvasRef.current, true);
@@ -123,10 +152,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
     const scene = new BABYLON.Scene(engine);
     sceneRef.current = scene;
 
-    // Create a root mesh to hold all models
-    const rootMesh = new BABYLON.TransformNode("root", scene);
-
-    // Camera setup for both AR and non-AR
+    // カメラ設定
     const camera = new BABYLON.ArcRotateCamera(
       "camera",
       Math.PI / 2,
@@ -137,6 +163,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
     );
     camera.attachControl(canvasRef.current, true);
 
+    // ライト設定
     const light = new BABYLON.HemisphericLight(
       "light",
       new BABYLON.Vector3(1, 1, 0),
@@ -144,16 +171,19 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
     );
     light.intensity = 0.7;
 
-    // Load models and initialize AR
+    // モデル読み込みとAR初期化
     loadModels();
     initializeAR();
 
+    // レンダリングループ
     engine.runRenderLoop(() => {
       scene.render();
     });
 
+    // リサイズ対応
     window.addEventListener("resize", () => engine.resize());
 
+    // クリーンアップ
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
@@ -175,30 +205,14 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
     };
   }, [modelUrls, loadModels, initializeAR]);
 
-  useEffect(() => {
-    if (sceneRef.current && modelContainersRef.current.length > 0) {
-      const currentModel = modelContainersRef.current[currentIndex];
-      if (!currentModel) return;
-
-      modelContainersRef.current.forEach((container, index) => {
-        if (index === currentIndex) {
-          container.addAllToScene();
-          // Adjust model placement for AR
-          container.rootNodes.forEach((node) => {
-            if (node instanceof BABYLON.TransformNode) {
-              node.position.y = 0; // Place on floor
-              node.scaling.setAll(0.5); // Scale down for AR
-            }
-          });
-        } else {
-          container.removeAllFromScene();
-        }
-      });
-    }
-  }, [currentIndex]);
+  // 手動モデル切り替え関数
+  const handleNextModel = () => {
+    setCurrentIndex((prev) => (prev + 1) % modelContainersRef.current.length);
+  };
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {/* 読み込み中表示 */}
       {isLoading && (
         <div
           style={{
@@ -214,7 +228,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
           }}
         >
           <p>
-            Loading {loadedFiles}/{modelUrls.length} models...
+            モデル読み込み中 {loadedFiles}/{modelUrls.length}...
           </p>
           <div style={{ width: "100%", background: "#ccc", height: "5px" }}>
             <div
@@ -227,6 +241,8 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
           </div>
         </div>
       )}
+
+      {/* ARサポート外デバイス警告 */}
       {!isARSupported && (
         <div
           style={{
@@ -241,10 +257,14 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
             fontSize: "14px",
           }}
         >
-          AR is not supported on this device
+          このデバイスはARに対応していません
         </div>
       )}
+
+      {/* メインキャンバス */}
       <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }} />
+
+      {/* AR起動ボタン */}
       {isARSupported && !isARActive && (
         <button
           style={{
@@ -268,7 +288,27 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
             }
           }}
         >
-          Enter AR
+          ARを起動
+        </button>
+      )}
+
+      {/* モデル切り替えボタン (AR起動中のみ表示) */}
+      {isARActive && modelContainersRef.current.length > 1 && (
+        <button
+          style={{
+            position: "absolute",
+            bottom: "20px",
+            right: "20px",
+            padding: "10px 20px",
+            background: "#2196F3",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleNextModel}
+        >
+          次のモデル
         </button>
       )}
     </div>
