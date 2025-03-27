@@ -109,39 +109,12 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
       xrHelperRef.current = xrHelper;
 
       xrHelper.baseExperience.onStateChangedObservable.add((state) => {
-        setIsARSupported(state != BABYLON.WebXRState.NOT_IN_XR);
-        setIsARActive(state == BABYLON.WebXRState.IN_XR);
+        setIsARSupported(state !== BABYLON.WebXRState.NOT_IN_XR);
+        setIsARActive(state === BABYLON.WebXRState.IN_XR);
       });
 
       // 床へのテレポート設定
       xrHelper.teleportation.attach();
-
-      // ARモードでのモデル移動機能を追加
-      xrHelper.baseExperience.onStateChangedObservable.add((state) => {
-        if (state === BABYLON.WebXRState.IN_XR) {
-          const scene = sceneRef.current;
-          if (!scene) return;
-
-          // タッチ操作の設定
-          scene.onPointerObservable.add((pointerInfo) => {
-            if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN) {
-              const pickResult = scene.pick(
-                (pointerInfo.event as any).clientX,
-                (pointerInfo.event as any).clientY
-              );
-              if (pickResult.hit && pickResult.pickedMesh) {
-                // 選択されたメッシュを移動可能に
-                const selectedMesh = pickResult.pickedMesh;
-                const dragBehavior = new BABYLON.PointerDragBehavior({
-                  dragAxis: new BABYLON.Vector3(1, 0, 1), // X軸（左右）とZ軸（奥行き）方向に移動可能
-                  dragPlaneNormal: new BABYLON.Vector3(0, 1, 0), // 床面に沿って移動
-                });
-                selectedMesh.addBehavior(dragBehavior);
-              }
-            }
-          });
-        }
-      });
     } catch (error) {
       console.error("AR初期化エラー:", error);
       setIsARSupported(false);
@@ -162,6 +135,15 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
             if (node instanceof BABYLON.TransformNode) {
               node.position.y = 0; // 床に配置
               node.scaling.setAll(modelScale); // スケール調整
+
+              // ドラッグビヘイビアを追加
+              if (isARActive) {
+                const dragBehavior = new BABYLON.PointerDragBehavior({
+                  dragAxis: new BABYLON.Vector3(1, 0, 1),
+                  dragPlaneNormal: new BABYLON.Vector3(0, 1, 0),
+                });
+                node.addBehavior(dragBehavior);
+              }
             }
           });
         } else {
@@ -169,7 +151,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
         }
       });
     }
-  }, [currentIndex, modelScale]);
+  }, [currentIndex, modelScale, isARActive]);
 
   // シーン初期化
   useEffect(() => {
