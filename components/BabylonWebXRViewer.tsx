@@ -109,12 +109,39 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
       xrHelperRef.current = xrHelper;
 
       xrHelper.baseExperience.onStateChangedObservable.add((state) => {
-        setIsARSupported(state !== BABYLON.WebXRState.NOT_IN_XR);
-        setIsARActive(state === BABYLON.WebXRState.IN_XR);
+        setIsARSupported(state != BABYLON.WebXRState.NOT_IN_XR);
+        setIsARActive(state == BABYLON.WebXRState.IN_XR);
       });
 
       // 床へのテレポート設定
       xrHelper.teleportation.attach();
+
+      // ARモードでのモデル移動機能を追加
+      xrHelper.baseExperience.onStateChangedObservable.add((state) => {
+        if (state === BABYLON.WebXRState.IN_XR) {
+          const scene = sceneRef.current;
+          if (!scene) return;
+
+          // タッチ操作の設定
+          scene.onPointerObservable.add((pointerInfo) => {
+            if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN) {
+              const pickResult = scene.pick(
+                (pointerInfo.event as any).clientX,
+                (pointerInfo.event as any).clientY
+              );
+              if (pickResult.hit && pickResult.pickedMesh) {
+                // 選択されたメッシュを移動可能に
+                const selectedMesh = pickResult.pickedMesh;
+                const dragBehavior = new BABYLON.PointerDragBehavior({
+                  dragAxis: new BABYLON.Vector3(1, 0, 1), // X軸（左右）とZ軸（奥行き）方向に移動可能
+                  dragPlaneNormal: new BABYLON.Vector3(0, 1, 0), // 床面に沿って移動
+                });
+                selectedMesh.addBehavior(dragBehavior);
+              }
+            }
+          });
+        }
+      });
     } catch (error) {
       console.error("AR初期化エラー:", error);
       setIsARSupported(false);
@@ -205,11 +232,6 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
     };
   }, [modelUrls, loadModels, initializeAR]);
 
-  // 手動モデル切り替え関数
-  const handleNextModel = () => {
-    setCurrentIndex((prev) => (prev + 1) % modelContainersRef.current.length);
-  };
-
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       {/* 読み込み中表示 */}
@@ -289,26 +311,6 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
           }}
         >
           ARを起動
-        </button>
-      )}
-
-      {/* モデル切り替えボタン (AR起動中のみ表示) */}
-      {isARActive && modelContainersRef.current.length > 1 && (
-        <button
-          style={{
-            position: "absolute",
-            bottom: "20px",
-            right: "20px",
-            padding: "10px 20px",
-            background: "#2196F3",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-          onClick={handleNextModel}
-        >
-          次のモデル
         </button>
       )}
     </div>
