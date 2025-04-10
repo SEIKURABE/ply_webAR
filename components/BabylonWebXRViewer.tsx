@@ -137,13 +137,13 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
               node.scaling.setAll(modelScale); // スケール調整
 
               // ドラッグビヘイビアを追加
-              if (isARActive) {
-                const dragBehavior = new BABYLON.PointerDragBehavior({
-                  dragAxis: new BABYLON.Vector3(1, 0, 1),
-                  dragPlaneNormal: new BABYLON.Vector3(0, 1, 0),
-                });
-                node.addBehavior(dragBehavior);
-              }
+              // if (isARActive) {
+              //   const dragBehavior = new BABYLON.PointerDragBehavior({
+              //     dragAxis: new BABYLON.Vector3(1, 0, 1),
+              //     dragPlaneNormal: new BABYLON.Vector3(0, 1, 0),
+              //   });
+              //   node.addBehavior(dragBehavior);
+              // }
             }
           });
         } else {
@@ -273,7 +273,7 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
         <button
           style={{
             position: "absolute",
-            bottom: "20px",
+            bottom: "56px",
             left: "50%",
             transform: "translateX(-50%)",
             padding: "10px 20px",
