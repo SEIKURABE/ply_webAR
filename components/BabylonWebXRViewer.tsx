@@ -108,10 +108,10 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
 
       xrHelperRef.current = xrHelper;
 
-      xrHelper.baseExperience.onStateChangedObservable.add((state) => {
-        setIsARSupported(state !== BABYLON.WebXRState.NOT_IN_XR);
-        setIsARActive(state === BABYLON.WebXRState.IN_XR);
-      });
+      // xrHelper.baseExperience.onStateChangedObservable.add((state) => {
+      //   setIsARSupported(state !== BABYLON.WebXRState.NOT_IN_XR);
+      //   setIsARActive(state === BABYLON.WebXRState.IN_XR);
+      // });
 
       // 床へのテレポート設定
       xrHelper.teleportation.attach();
@@ -135,15 +135,6 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
             if (node instanceof BABYLON.TransformNode) {
               node.position.y = 0; // 床に配置
               node.scaling.setAll(modelScale); // スケール調整
-
-              // ドラッグビヘイビアを追加
-              // if (isARActive) {
-              //   const dragBehavior = new BABYLON.PointerDragBehavior({
-              //     dragAxis: new BABYLON.Vector3(1, 0, 1),
-              //     dragPlaneNormal: new BABYLON.Vector3(0, 1, 0),
-              //   });
-              //   node.addBehavior(dragBehavior);
-              // }
             }
           });
         } else {
@@ -246,30 +237,11 @@ const BabylonWebXRViewer: React.FC<SPZARViewerProps> = ({
         </div>
       )}
 
-      {/* ARサポート外デバイス警告 */}
-      {!isARSupported && (
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            background: "rgba(255, 0, 0, 0.7)",
-            color: "white",
-            padding: "10px",
-            textAlign: "center",
-            fontSize: "14px",
-          }}
-        >
-          このデバイスはARに対応していません
-        </div>
-      )}
-
       {/* メインキャンバス */}
       <canvas ref={canvasRef} style={{ width: "100%", height: "100%" }} />
 
       {/* AR起動ボタン */}
-      {isARSupported && !isARActive && (
+      {isARActive && (
         <button
           style={{
             position: "absolute",
