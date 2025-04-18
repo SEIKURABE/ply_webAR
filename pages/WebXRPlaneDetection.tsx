@@ -14,7 +14,7 @@ const { publicRuntimeConfig } = getConfig();
 const basePath = publicRuntimeConfig.basePath || "";
 
 export default function Home() {
-  const url = `${basePath}/spz/spz1.spz`;
+  const url = `${basePath}/spz/spz2.spz`;
 
   return (
     <div style={{ width: "100%", height: "100%", position: "absolute" }}>
