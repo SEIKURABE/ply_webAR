@@ -61,7 +61,7 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
             // 平面のサイズや方向の検出条件（任意で調整可能）
           },
           outputMeshDescriptors: {
-            visible: false, // デバッグ時はtrueに
+            visible: true, // デバッグ時はtrueに
             pickable: true, // ドラッグ対象にするため
             classification: true,
             attributes: true,
