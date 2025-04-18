@@ -5,6 +5,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Component {...pageProps} />
+
       <div className='menu'>
         <Link className='alink' href='/'>
           Ply
@@ -18,10 +19,20 @@ export default function App({ Component, pageProps }: AppProps) {
         <Link className='alink' href='SpzAnimation'>
           SpzAnimation
         </Link>
-        <Link className='alink' href='WebXR'>
-          WebXR
+        <Link className='alink' href='WebXR_1'>
+          WebXR_1
+        </Link>
+        <Link className='alink' href='WebXR_2'>
+          WebXR_2
         </Link>
       </div>
+
+      <style jsx>{`
+        .menu {
+          width: 100%;
+          overflow-x: auto;
+        }
+      `}</style>
     </>
   );
 }
