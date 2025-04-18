@@ -47,7 +47,7 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
 
       await xrHelper.baseExperience.enterXRAsync(
         "immersive-ar",
-        "unbounded",
+        "local-floor",
         xrHelper.renderTarget
       );
 
