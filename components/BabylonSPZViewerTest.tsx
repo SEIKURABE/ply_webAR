@@ -40,22 +40,79 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         scene
       );
 
+      // WebXR設定
       const xrHelper = await scene.createDefaultXRExperienceAsync({
-        uiOptions: {
-          sessionMode: "immersive-ar",
-        },
+        uiOptions: { sessionMode: "immersive-ar" },
       });
 
+      await xrHelper.baseExperience.enterXRAsync(
+        "immersive-ar",
+        "unbounded",
+        xrHelper.renderTarget
+      );
+
+      // 平面検出機能を有効に
+      const featuresManager = xrHelper.baseExperience.featuresManager;
+      const planeDetector = featuresManager.enableFeature(
+        BABYLON.WebXRFeatureName.PLANE_DETECTION,
+        "latest",
+        {
+          preferredDetectorOptions: {
+            // 平面のサイズや方向の検出条件（任意で調整可能）
+          },
+          outputMeshDescriptors: {
+            visible: false, // デバッグ時はtrueに
+            pickable: true, // ドラッグ対象にするため
+            classification: true,
+            attributes: true,
+          },
+        }
+      ) as BABYLON.WebXRPlaneDetector;
+
+      // モデルの親Mesh
       const rootMesh = new BABYLON.Mesh("root", scene);
       loadedModel.meshes.forEach((mesh) => {
         if (mesh.name !== "root") {
           mesh.parent = rootMesh;
         }
       });
-      rootMesh.scaling = new BABYLON.Vector3(1, 1, 1); // スケール調整
+      rootMesh.scaling = new BABYLON.Vector3(1, 1, 1);
       rootMesh.position = new BABYLON.Vector3(0, 0, 0);
-      // モデルの追加
       loadedModel.addAllToScene();
+
+      // ドラッグ制御
+      let isDragging = false;
+
+      scene.onPointerObservable.add((pointerInfo) => {
+        if (xrHelper.baseExperience.state !== BABYLON.WebXRState.IN_XR) return;
+
+        switch (pointerInfo.type) {
+          case BABYLON.PointerEventTypes.POINTERDOWN:
+            isDragging = true;
+            break;
+
+          case BABYLON.PointerEventTypes.POINTERUP:
+            isDragging = false;
+            break;
+
+          case BABYLON.PointerEventTypes.POINTERMOVE:
+            if (!isDragging) return;
+
+            const pickResult = scene.pick(
+              scene.pointerX,
+              scene.pointerY,
+              (mesh) => mesh.name.startsWith("xr-plane-mesh") // 平面Meshのみを対象に
+            );
+
+            if (pickResult?.hit && pickResult.pickedPoint) {
+              const { x, z } = pickResult.pickedPoint;
+              rootMesh.position.x = x;
+              rootMesh.position.z = z;
+              // Yは固定、平面にフィットするならpickResult.pickedPoint.yも使える
+            }
+            break;
+        }
+      });
     })();
 
     engine.runRenderLoop(() => {
