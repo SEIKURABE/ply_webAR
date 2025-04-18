@@ -47,7 +47,7 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
 
       await xrHelper.baseExperience.enterXRAsync(
         "immersive-ar",
-        "unbounded",
+        "local-floor",
         xrHelper.renderTarget
       );
 
@@ -69,50 +69,60 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         }
       ) as BABYLON.WebXRPlaneDetector;
 
-      // モデルの親Mesh
-      const rootMesh = new BABYLON.Mesh("root", scene);
-      loadedModel.meshes.forEach((mesh) => {
-        if (mesh.name !== "root") {
-          mesh.parent = rootMesh;
+      planeDetector.onPlaneAddedObservable.add((plane: any) => {
+        const mesh = plane.xrPlaneMesh;
+        if (mesh) {
+          const mat = new BABYLON.StandardMaterial("planeMat", scene);
+          mat.diffuseColor = new BABYLON.Color3(0.2, 0.8, 1); // 明るい青
+          mat.alpha = 0.3;
+          mesh.material = mat;
         }
       });
-      rootMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-      rootMesh.position = new BABYLON.Vector3(0, 0, 0);
-      loadedModel.addAllToScene();
+
+      // モデルの親Mesh
+      // const rootMesh = new BABYLON.Mesh("root", scene);
+      // loadedModel.meshes.forEach((mesh) => {
+      //   if (mesh.name !== "root") {
+      //     mesh.parent = rootMesh;
+      //   }
+      // });
+      // rootMesh.scaling = new BABYLON.Vector3(1, 1, 1);
+      // rootMesh.position = new BABYLON.Vector3(0, 0, 0);
+      // loadedModel.addAllToScene();
 
       // ドラッグ制御
-      let isDragging = false;
+      // let isDragging = false;
 
-      scene.onPointerObservable.add((pointerInfo) => {
-        if (xrHelper.baseExperience.state !== BABYLON.WebXRState.IN_XR) return;
+      // scene.onPointerObservable.add((pointerInfo) => {
+      //   if (xrHelper.baseExperience.state !== BABYLON.WebXRState.IN_XR) return;
 
-        switch (pointerInfo.type) {
-          case BABYLON.PointerEventTypes.POINTERDOWN:
-            isDragging = true;
-            break;
+      //   switch (pointerInfo.type) {
+      //     case BABYLON.PointerEventTypes.POINTERDOWN:
+      //       isDragging = true;
+      //       break;
 
-          case BABYLON.PointerEventTypes.POINTERUP:
-            isDragging = false;
-            break;
+      //     case BABYLON.PointerEventTypes.POINTERUP:
+      //       isDragging = false;
+      //       break;
 
-          case BABYLON.PointerEventTypes.POINTERMOVE:
-            if (!isDragging) return;
+      //     case BABYLON.PointerEventTypes.POINTERMOVE:
+      //       if (!isDragging) return;
 
-            const pickResult = scene.pick(
-              scene.pointerX,
-              scene.pointerY,
-              (mesh) => mesh.name.startsWith("xr-plane-mesh") // 平面Meshのみを対象に
-            );
+      //       const pickResult = scene.pick(
+      //         scene.pointerX,
+      //         scene.pointerY,
+      //         (mesh) => mesh.name.startsWith("xr-plane-mesh") // 平面Meshのみを対象に
+      //       );
 
-            if (pickResult?.hit && pickResult.pickedPoint) {
-              const { x, z } = pickResult.pickedPoint;
-              rootMesh.position.x = x;
-              rootMesh.position.z = z;
-              // Yは固定、平面にフィットするならpickResult.pickedPoint.yも使える
-            }
-            break;
-        }
-      });
+      //       if (pickResult?.hit && pickResult.pickedPoint) {
+      //         const { x, z } = pickResult.pickedPoint;
+      //         rootMesh.position.x = x;
+      //         rootMesh.position.z = z;
+      //         // Yは固定、平面にフィットするならpickResult.pickedPoint.yも使える
+      //       }
+      //       break;
+      //   }
+      // });
     })();
 
     engine.runRenderLoop(() => {
