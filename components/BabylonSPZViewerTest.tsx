@@ -45,11 +45,11 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         uiOptions: { sessionMode: "immersive-ar" },
       });
 
-      await xrHelper.baseExperience.enterXRAsync(
-        "immersive-ar",
-        "local-floor",
-        xrHelper.renderTarget
-      );
+      // await xrHelper.baseExperience.enterXRAsync(
+      //   "immersive-ar",
+      //   "local-floor",
+      //   xrHelper.renderTarget
+      // );
 
       // 平面検出機能を有効に
       const featuresManager = xrHelper.baseExperience.featuresManager;
