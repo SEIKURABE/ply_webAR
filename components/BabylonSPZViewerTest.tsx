@@ -80,15 +80,16 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
       });
 
       // モデルの親Mesh
-      // const rootMesh = new BABYLON.Mesh("root", scene);
-      // loadedModel.meshes.forEach((mesh) => {
-      //   if (mesh.name !== "root") {
-      //     mesh.parent = rootMesh;
-      //   }
-      // });
-      // rootMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-      // rootMesh.position = new BABYLON.Vector3(0, 0, 0);
-      // loadedModel.addAllToScene();
+      const rootMesh = new BABYLON.Mesh("root", scene);
+      loadedModel.meshes.forEach((mesh) => {
+        if (mesh.name !== "root") {
+          mesh.parent = rootMesh;
+        }
+      });
+      rootMesh.scaling = new BABYLON.Vector3(1, 1, 1);
+      rootMesh.position = new BABYLON.Vector3(0, 0, 0);
+
+      loadedModel.addAllToScene();
 
       // ドラッグ制御
       // let isDragging = false;
@@ -124,6 +125,8 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
       //   }
       // });
     })();
+
+    // scene.debugLayer.show();
 
     engine.runRenderLoop(() => {
       scene.render();
