@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import getConfig from "next/config";
 
 const BabylonSPZViewerTest = dynamic(
-  () => import("../components/BabylonSPZViewerTest"),
+  () => import("../components/BabylonSPZPlaneDetection"),
   {
     ssr: false,
   }
