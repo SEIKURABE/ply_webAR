@@ -13,14 +13,20 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
   const [planeDetected, setPlaneDetected] = useState(false);
   const [xrSessionActive, setXrSessionActive] = useState(false);
   const planeDetectedRef = useRef(false);
+  const pendingPlacementRef = useRef(false);
+  const lastHitResultRef = useRef<BABYLON.IWebXRHitResult | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
     let engine = new BABYLON.Engine(canvasRef.current, true);
     let scene = new BABYLON.Scene(engine);
     let xrPlaneDetector: BABYLON.WebXRPlaneDetector | null = null;
+    let xrHitTest: BABYLON.WebXRHitTest | null = null;
     let loadedModelContainer: BABYLON.AssetContainer | null = null;
     let modelRoot: BABYLON.TransformNode | null = null;
+    let pointerObserver: BABYLON.Nullable<
+      BABYLON.Observer<BABYLON.PointerInfo>
+    > = null;
 
     // カメラの設定
     const camera = new BABYLON.ArcRotateCamera(
@@ -75,6 +81,8 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         setXrSessionActive(false);
         setPlaneDetected(false);
         planeDetectedRef.current = false;
+        pendingPlacementRef.current = false;
+        lastHitResultRef.current = null;
       });
 
       // 平面検出機能の追加
@@ -106,18 +114,43 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         });
 
         // 平面上のタップを検出する
-        scene.onPointerObservable.add((pointerInfo) => {
+        pointerObserver = scene.onPointerObservable.add((pointerInfo) => {
           if (pointerInfo.type !== BABYLON.PointerEventTypes.POINTERDOWN) return;
-          if (!planeDetectedRef.current || !loadedModelContainer || !modelRoot)
-            return;
+          pendingPlacementRef.current = true;
+        });
+      }
+
+      // ヒットテスト機能の追加（より正確な位置決め用）
+      xrHitTest = xrHelper.baseExperience.featuresManager.enableFeature(
+        BABYLON.WebXRHitTest,
+        "latest",
+        {
+          enableTransientHitTest: true,
+          entityTypes: ["plane"],
+        }
+      ) as BABYLON.WebXRHitTest;
+
+      xrHitTest.onHitTestResultObservable.add((results) => {
+        if (results.length > 0) {
+          lastHitResultRef.current = results[0];
+          if (!planeDetectedRef.current) {
+            setPlaneDetected(true);
+            planeDetectedRef.current = true;
+          }
+        }
+
+        if (
+          pendingPlacementRef.current &&
+          lastHitResultRef.current &&
+          loadedModelContainer &&
+          modelRoot
+        ) {
+          pendingPlacementRef.current = false;
 
           // 既存のモデルを削除
           while (modelRoot.getChildren().length > 0) {
             modelRoot.getChildren()[0].dispose();
           }
-
-          const pickedPoint = pointerInfo.pickInfo?.pickedPoint;
-          if (!pickedPoint) return;
 
           // モデルをシーンに追加
           const instantiated = loadedModelContainer.instantiateModelsToScene(
@@ -129,21 +162,14 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
           });
 
           // モデルを選択位置に配置
-          modelRoot.position.copyFrom(pickedPoint);
+          modelRoot.position.copyFrom(lastHitResultRef.current.position);
+          modelRoot.rotationQuaternion =
+            lastHitResultRef.current.rotationQuaternion.clone();
 
           // モデルのスケールを調整（必要に応じて）
           modelRoot.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-        });
-      }
-
-      // ヒットテスト機能の追加（より正確な位置決め用）
-      xrHelper.baseExperience.featuresManager.enableFeature(
-        BABYLON.WebXRHitTest,
-        "latest",
-        {
-          xrInput: xrHelper.input,
         }
-      );
+      });
     })();
 
     engine.runRenderLoop(() => {
@@ -158,6 +184,9 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         engine.dispose();
       }
       if (scene) {
+        if (pointerObserver) {
+          scene.onPointerObservable.remove(pointerObserver);
+        }
         scene.meshes.forEach((mesh) => mesh.dispose());
         scene.dispose();
       }
