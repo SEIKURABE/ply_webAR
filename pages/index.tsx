@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState, Suspense } from "react";
 
 import PLYViewer from "../components/PLYViewer";
-
-import getConfig from "next/config";
-
-const { publicRuntimeConfig } = getConfig();
-const basePath = publicRuntimeConfig.basePath || "";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const App = () => {
   const plyUrl = `${basePath}/model/demo/frames/frame17.ply`;

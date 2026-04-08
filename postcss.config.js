@@ -1,7 +1,5 @@
 module.exports = {
   plugins: {
-    "postcss-color-function": {},
-    "postcss-easing-gradients": {},
     "postcss-flexbugs-fixes": {},
     "postcss-preset-env": {
       autoprefixer: {
