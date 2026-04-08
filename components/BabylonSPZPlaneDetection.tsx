@@ -85,8 +85,8 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         lastHitResultRef.current = null;
       });
 
-      // 平面検出機能の追加
-      if (
+      // 平面検出機能の追加（未対応端末では無効化して続行）
+      const planeFeature =
         xrHelper.baseExperience.featuresManager.enableFeature(
           BABYLON.WebXRPlaneDetector,
           "latest",
@@ -98,27 +98,29 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
               size: 0.5, // 平面インジケーターのサイズ
               color: new BABYLON.Color3(0.2, 0.8, 0.4), // 緑色
             },
-          }
-        ) !== null
-      ) {
-        // 平面検出機能が有効になったら
+          },
+          true,
+          false
+        );
+
+      if (planeFeature) {
         xrPlaneDetector =
           xrHelper.baseExperience.featuresManager.getEnabledFeature(
             "plane-detection"
           ) as BABYLON.WebXRPlaneDetector;
 
         // 平面が検出されたときのイベント
-        xrPlaneDetector.onPlaneAddedObservable.add((plane) => {
+        xrPlaneDetector.onPlaneAddedObservable.add(() => {
           setPlaneDetected(true);
           planeDetectedRef.current = true;
         });
-
-        // 平面上のタップを検出する
-        pointerObserver = scene.onPointerObservable.add((pointerInfo) => {
-          if (pointerInfo.type !== BABYLON.PointerEventTypes.POINTERDOWN) return;
-          pendingPlacementRef.current = true;
-        });
       }
+
+      // 平面上のタップを検出する（plane detection 非対応でも有効化）
+      pointerObserver = scene.onPointerObservable.add((pointerInfo) => {
+        if (pointerInfo.type !== BABYLON.PointerEventTypes.POINTERDOWN) return;
+        pendingPlacementRef.current = true;
+      });
 
       // ヒットテスト機能の追加（より正確な位置決め用）
       xrHitTest = xrHelper.baseExperience.featuresManager.enableFeature(
@@ -126,7 +128,7 @@ const BabylonSPZViewerTest: React.FC<SPZViewerProps> = ({ modelUrl }) => {
         "latest",
         {
           enableTransientHitTest: true,
-          entityTypes: ["plane"],
+          entityTypes: ["plane", "point"],
         }
       ) as BABYLON.WebXRHitTest;
 
