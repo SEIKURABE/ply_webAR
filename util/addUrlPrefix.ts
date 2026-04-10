@@ -1,9 +1,5 @@
-import getConfig from "next/config";
-
-const { publicRuntimeConfig } = getConfig();
-
 export function addUrlPrefix(url: string) {
-  const prefix = (publicRuntimeConfig && publicRuntimeConfig.basePath) || "";
+  const prefix = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
   return `${prefix}${url}`;
 }

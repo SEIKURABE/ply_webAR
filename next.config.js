@@ -7,9 +7,6 @@ const nextConfig = {
   reactStrictMode: true,
   basePath: isProd ? SUB_DIRECTORY : "",
   assetPrefix: isProd ? SUB_DIRECTORY : "",
-  publicRuntimeConfig: {
-    basePath: isProd ? SUB_DIRECTORY : "",
-  },
 };
 
 module.exports = nextConfig;
