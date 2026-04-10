@@ -25,19 +25,30 @@ jobs:
     # Next.jsアプリをビルドする
     # プロジェクトルート直下に.nextディレクトリができる
     - name: build
+      env:
+        NODE_ENV: production
       run: npm run build
 
     - name: verify out directory
       run: |
         pwd
         ls -la
-        test -d ./out
+        echo "----- next.config.js -----"
+        cat ./next.config.js
+        echo "----- find out directories -----"
+        find . -maxdepth 3 -type d -name out -print
+        if [ ! -d ./out ]; then
+          echo "'./out' was not created by the build."
+          echo "Next.js static export with output: 'export' should generate ./out during 'next build'."
+          exit 1
+        fi
         ls -la ./out
 
     # しかしGitHub Pagesの仕様として_から始まるディレクトリが見えず404となる
     # つまりHTMLからJSを読み込めない
     # これを回避するために.nojekyllファイルをoutディレクトリに作る
     - name: add nojekyll
+      if: success()
       run: touch ./out/.nojekyll
 
     # gh-pagesブランチにoutディレクトリの中身をプッシュする
