@@ -1,4 +1,6 @@
 name: deploy
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 on:
   push:
     branches:
@@ -14,15 +16,7 @@ jobs:
       uses: actions/setup-node@v5
       with:
         node-version: '24.14.1'
-
-    # npm install の際にキャッシュを使うよう設定
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+        cache: 'npm'
 
     # package.jsonに基づき依存パッケージをインストールする
     - name: npm-install
