@@ -1,5 +1,3 @@
-import React, { useEffect, useRef, useState, Suspense } from "react";
-
 import PLYViewer from "../components/PLYViewer";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
