@@ -6,14 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
-    "export": "next build"
+    "lint": "eslint ."
   },
   "engines": {
     "node": ">=24.14.1"
   },
   "dependencies": {
-    "@ar-js-org/ar.js": "^3.4.7",
     "@babylonjs/core": "^7.53.2",
     "@babylonjs/gui": "^7.53.2",
     "@babylonjs/loaders": "^7.53.2",
@@ -21,27 +19,23 @@
     "@react-three/drei": "^9.57.2",
     "@react-three/fiber": "^8.12.0",
     "@react-three/xr": "^5.4.0",
-    "@types/babylonjs": "^2.4.5",
     "@types/node": "18.15.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "@types/three": "^0.149.0",
-    "aframe": "^1.4.1",
-    "aframe-react": "^4.4.0",
     "eslint": "^9.39.1",
-    "eslint-config-next": "^16.2.2",
-    "next": "^16.2.2",
+    "eslint-config-next": "^16.2.3",
+    "next": "^16.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-webcam": "^7.0.1",
     "three": "^0.174.0",
     "three-stdlib": "^2.21.8",
-    "typescript": "4.9.5",
+    "typescript": "^5.8.3",
     "webxr-polyfill": "^2.0.3"
   },
   "devDependencies": {
     "@styled-jsx/plugin-sass": "^4.0.2",
-    "@types/aframe": "^1.2.2",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
     "postcss-flexbugs-fixes": "^5.0.2",
@@ -52,6 +46,6 @@
     "styled-jsx-plugin-postcss": "^4.0.1"
   },
   "overrides": {
-    "axios": "^1.13.5"
+    "axios": "^1.15.0"
   }
 }
