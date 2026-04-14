@@ -1,8 +1,8 @@
 import PLYViewer from "../components/PLYViewer";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+import { addBasePath } from "@/util/addUrlPrefix";
 
 const App = () => {
-  const plyUrl = `${basePath}/model/demo/frames/frame17.ply`;
+  const plyUrl = addBasePath(`/model/demo/frames/frame17.ply`);
 
   return (
     <div className='page-index'>
