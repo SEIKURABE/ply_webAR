@@ -1,6 +1,6 @@
 self.__BUILD_MANIFEST = {
   "/": [
-    "static/chunks/09gp5pa.hxdat.js"
+    "static/chunks/0a3scakmm30yd.js"
   ],
   "/MV": [
     "static/chunks/1865-c0d4n6k_.js"
@@ -12,19 +12,19 @@ self.__BUILD_MANIFEST = {
     "static/chunks/0f2pe~kqm86wo.js"
   ],
   "/PlyAnimation": [
-    "static/chunks/0zhb_y8o-ub8t.js"
+    "static/chunks/0t3tuwxosou0f.js"
   ],
   "/Spz": [
     "static/chunks/0ihxdz4sladhv.js"
   ],
   "/SpzAnimation": [
-    "static/chunks/0anbje2~4cwxf.js"
+    "static/chunks/0j033-gbnqzt4.js"
   ],
   "/WebXR": [
-    "static/chunks/1844~ht9zq3.d.js"
+    "static/chunks/0eo-p.fg0j40t.js"
   ],
   "/WebXRPlaneDetection": [
-    "static/chunks/0j~0kcg9igf.g.js"
+    "static/chunks/0p-a9.td2pij0.js"
   ],
   "/_error": [
     "static/chunks/0szgov4g1j7j_.js"
