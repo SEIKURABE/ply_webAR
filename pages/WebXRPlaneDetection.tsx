@@ -1,5 +1,5 @@
-import React from "react";
 import dynamic from "next/dynamic";
+import { addBasePath } from "@/util/addUrlPrefix";
 
 const BabylonSPZViewerTest = dynamic(
   () => import("../components/BabylonSPZPlaneDetection"),
@@ -11,7 +11,7 @@ const BabylonSPZViewerTest = dynamic(
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export default function Home() {
-  const url = `${basePath}/spz/spz2.spz`;
+  const url = addBasePath(`/spz/spz2.spz`);
 
   return (
     <div style={{ width: "100%", height: "100%", position: "absolute" }}>

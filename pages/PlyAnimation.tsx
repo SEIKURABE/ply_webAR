@@ -1,14 +1,9 @@
-import React from "react";
-import dynamic from "next/dynamic";
-
 import PLYAnimationViewer from "../components/PLYAnimationViewer";
-
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+import { addBasePath } from "@/util/addUrlPrefix";
 
 export default function Home() {
-  const plyUrls = Array.from(
-    { length: 50 },
-    (_, i) => `${basePath}/model/demo/frames/frame${i}.ply`,
+  const plyUrls = Array.from({ length: 50 }, (_, i) =>
+    addBasePath(`/model/demo/frames/frame${i}.ply`),
   );
 
   return (
