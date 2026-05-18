@@ -1,36 +1,36 @@
 self.__BUILD_MANIFEST = {
   "/": [
-    "static/chunks/0a3scakmm30yd.js"
+    "static/chunks/02.puwzn_jvd8.js"
   ],
   "/MV": [
-    "static/chunks/1865-c0d4n6k_.js"
+    "static/chunks/0cywik65410we.js"
   ],
   "/MV_Other": [
-    "static/chunks/06wgkyt5uc02u.js"
+    "static/chunks/0-~q-n~d.01u0.js"
   ],
   "/MV_WebXR": [
-    "static/chunks/0f2pe~kqm86wo.js"
+    "static/chunks/0r6zx_.p_83o0.js"
   ],
   "/PlyAnimation": [
-    "static/chunks/0t3tuwxosou0f.js"
+    "static/chunks/0qeuwzt47-jkt.js"
   ],
   "/Spz": [
-    "static/chunks/0ihxdz4sladhv.js"
+    "static/chunks/0v450ce5hpvwy.js"
   ],
   "/SpzAnimation": [
-    "static/chunks/0j033-gbnqzt4.js"
+    "static/chunks/03egqjrk3h.z4.js"
   ],
   "/WebXR": [
-    "static/chunks/0eo-p.fg0j40t.js"
+    "static/chunks/12es-hovh3pnz.js"
   ],
   "/WebXRPlaneDetection": [
-    "static/chunks/0p-a9.td2pij0.js"
+    "static/chunks/0ivuw5l.ymkl6.js"
   ],
   "/_error": [
-    "static/chunks/0szgov4g1j7j_.js"
+    "static/chunks/14v0us4l6bv4g.js"
   ],
   "/r3xr": [
-    "static/chunks/0s1n1lsavlqr3.js"
+    "static/chunks/01uhtjxbwj~ng.js"
   ],
   "__rewrites": {
     "afterFiles": [],

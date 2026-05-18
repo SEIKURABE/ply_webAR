@@ -1,5 +1,5 @@
-__turbopack_load_page_chunks__("/WebXR", [
-  "static/chunks/0ndd3xlh2szp4.js",
+__turbopack_load_page_chunks__("/SpzAnimation", [
+  "static/chunks/0qxt2i-0yw6ea.js",
   "static/chunks/0g1roag._9-7c.js",
   "static/chunks/0f.pnts0hl0a2.js",
   "static/chunks/09k4y0tri1e4g.js",
@@ -9,20 +9,20 @@ __turbopack_load_page_chunks__("/WebXR", [
   "static/chunks/01kfgu02.2uo8.js",
   "static/chunks/0ilw3p62sf_vq.js",
   "static/chunks/0w5tibkh7b3sj.js",
-  "static/chunks/02g.q0e3qn~e8.js",
-  "static/chunks/01e_~5op2-8md.js",
+  "static/chunks/0v15k2rkg14ur.js",
+  "static/chunks/0ysndc9y98ekb.js",
   "static/chunks/02w1j3yj9c~5x.js",
   "static/chunks/0urp~wnko..3p.js",
   "static/chunks/0jdpxq3g.u7ef.js",
-  "static/chunks/12iaho_o7n-vu.js",
+  "static/chunks/0p.adf58uk-wm.js",
   "static/chunks/0w~f5cmu-gs~1.js",
   "static/chunks/13vyk.brp2y93.js",
   "static/chunks/0xbizwdfb4ee3.js",
-  "static/chunks/0cm2~d7j_tff0.js",
-  "static/chunks/0~rl4-~h63~xf.js",
-  "static/chunks/0mka8vflo2pag.js",
+  "static/chunks/12iaho_o7n-vu.js",
+  "static/chunks/0vq_bmfvcz43c.js",
+  "static/chunks/0z_bd-jw6bsde.js",
   "static/chunks/0hdxmdq8el0zm.js",
-  "static/chunks/0p.adf58uk-wm.js",
-  "static/chunks/05ciucit1bt~k.js",
-  "static/chunks/turbopack-04.d5.q.ekd.j.js"
+  "static/chunks/0cm2~d7j_tff0.js",
+  "static/chunks/0.it3b4f85sn9.js",
+  "static/chunks/turbopack-15337g~4ogfcj.js"
 ])
